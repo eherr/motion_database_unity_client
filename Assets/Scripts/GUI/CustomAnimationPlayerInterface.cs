@@ -8,7 +8,7 @@ namespace MotionDatabaseInterface
 {
 
     [RequireComponent(typeof(CustomAnimationPlayer))]
-    public class CustomAnimationPlayerUI : RESTInterface
+    public class CustomAnimationPlayerInterface : RESTInterface
     {
         public string clipID;
         public CanvasGroup loadIcon;

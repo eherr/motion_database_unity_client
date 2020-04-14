@@ -68,7 +68,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1236}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f2cf71d4334fc64abbf9b9e85dd901b, type: 3}
+  m_Script: {fileID: 11500000, guid: 73e579071d73fea48a4eed1005c12323, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   protocol: http
@@ -1763,6 +1763,11 @@ Prefab:
       propertyPath: m_Options.m_Options.Array.data[0].m_Text
       value: AgentA
       objectReference: {fileID: 0}
+    - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 2}
+      propertyPath: animationPlayer
+      value: 
+      objectReference: {fileID: 1247}
     m_RemovedComponents:
     - {fileID: 114831357823521412, guid: f5ea428d4512b924099dac74e9aa8b23, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: f5ea428d4512b924099dac74e9aa8b23, type: 2}

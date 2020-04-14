@@ -19,7 +19,7 @@ public class RESTGUIManager : MonoBehaviour {
     public int port;
     public string url;
     public bool usePortWorkAround;
-    public CustomAnimationPlayerUI currentPlayer;
+    public CustomAnimationPlayerInterface animationPlayer;
     public List<AvatarDefinition> avatars;
     public bool userInteraction;
     public Text animationTitle;
@@ -41,9 +41,9 @@ public class RESTGUIManager : MonoBehaviour {
     {
         modelIndex = 0;
         userInteraction = false;
-        currentPlayer.SetPort(port);
-        currentPlayer.SetURL(url);
-        currentPlayer.SetPortWorkAround(usePortWorkAround);
+        animationPlayer.SetPort(port);
+        animationPlayer.SetURL(url);
+        animationPlayer.SetPortWorkAround(usePortWorkAround);
         initialized = false;
         centerCamera = false;
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
@@ -61,22 +61,22 @@ public class RESTGUIManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (currentPlayer.avatar == null) return;
+        if (animationPlayer.avatar == null) return;
         var slider = GetComponentInChildren<Slider>();
         if (userInteraction)
         {
-            currentPlayer.avatar.SetCurrentFrame((int)slider.value);
-            int currentFrame = currentPlayer.avatar.frameIdx;
-            int nFrames = currentPlayer.avatar.GetNumFrames();
+            animationPlayer.avatar.SetCurrentFrame((int)slider.value);
+            int currentFrame = animationPlayer.avatar.frameIdx;
+            int nFrames = animationPlayer.avatar.GetNumFrames();
             frameCountText.text = "Frame: " + currentFrame.ToString() + "/" + nFrames.ToString();
-            animationTitle.text = currentPlayer.avatar.GetClipTitle();
+            animationTitle.text = animationPlayer.avatar.GetClipTitle();
         }
         else
         {
-            int currentFrame = currentPlayer.avatar.frameIdx;
-            int nFrames = currentPlayer.avatar.GetNumFrames();
+            int currentFrame = animationPlayer.avatar.frameIdx;
+            int nFrames = animationPlayer.avatar.GetNumFrames();
             frameCountText.text = "Frame: " + currentFrame.ToString() + "/" + nFrames.ToString();
-            animationTitle.text = currentPlayer.avatar.GetClipTitle();
+            animationTitle.text = animationPlayer.avatar.GetClipTitle();
 
             slider.maxValue = nFrames;
             slider.value = currentFrame;
@@ -97,16 +97,16 @@ public class RESTGUIManager : MonoBehaviour {
     }
 
     public bool IsPlaying(){
-        if (currentPlayer.avatar != null){
+        if (animationPlayer.avatar != null){
             return false;
         }else{
-            return currentPlayer.avatar.playAnimation;
+            return animationPlayer.avatar.playAnimation;
         }
     }
 
     public void ToggleAnimation()
     {
-         currentPlayer.ToggleAnimation();
+         animationPlayer.ToggleAnimation();
     }
 
     public void ToggleModelPanel()
@@ -129,27 +129,19 @@ public class RESTGUIManager : MonoBehaviour {
 
     public void GetMotion()
     {
-        currentPlayer.GetMotion();
+        animationPlayer.GetMotion();
     }
 
     public void OnChangeModel(){
         int newModelIdx = modelDropdown.value;
         if (newModelIdx >= 0 && newModelIdx < avatars.Count){
-            //currentPlayer.gameObject.SetActive(false);
-            //agentGeometries[oldModleIndex].SetActive(false);
             modelIndex = newModelIdx;
-            //currentPlayer = models[modelIdx];
-            currentPlayer.SetAvatarMesh(avatars[modelIndex].rootTransform, avatars[modelIndex].geometry);
+            animationPlayer.SetAvatarMesh(avatars[modelIndex].rootTransform, avatars[modelIndex].geometry);
 
-            //currentPlayer.gameObject.SetActive(true);
             avatars[modelIndex].geometry.SetActive(true);
-            if (currentPlayer.avatar != null){
-                currentPlayer.avatar.playAnimation = false;
+            if (animationPlayer.avatar != null){
+                animationPlayer.avatar.playAnimation = false;
             }
-            /*currentPlayer.SetProtocol(protocol);
-            currentPlayer.SetURL(url);
-            currentPlayer.SetPort(port);
-            currentPlayer.SetPortWorkAround(usePortWorkAround);*/
             GetSkeleton();
         }
 
@@ -188,17 +180,17 @@ public class RESTGUIManager : MonoBehaviour {
 
         if (HasAvatar(sourceSkeletonModel))
         {
-            currentPlayer.meshToggle.enabled = false;
-            currentPlayer.meshToggle.isOn = false;
-            currentPlayer.avatar.HideMesh();
+            animationPlayer.meshToggle.enabled = false;
+            animationPlayer.meshToggle.isOn = false;
+            animationPlayer.avatar.HideMesh();
         }else
         {
-            currentPlayer.meshToggle.enabled = true;
+            animationPlayer.meshToggle.enabled = true;
         }
-        if (currentPlayer.avatar != null){
-            currentPlayer.avatar.DestroySkeleton();
+        if (animationPlayer.avatar != null){
+            animationPlayer.avatar.DestroySkeleton();
         }
-        currentPlayer.GetSkeleton(sourceSkeletonModel);
+        animationPlayer.GetSkeleton(sourceSkeletonModel);
     
     }
 
@@ -215,25 +207,25 @@ public class RESTGUIManager : MonoBehaviour {
 
    public void GetMotionByID(string clipID)
     {
-       currentPlayer.GetMotionByID(clipID);
+       animationPlayer.GetMotionByID(clipID);
     }
 
 
     public void GetRandomSample(string modelID)
     {
-        currentPlayer.GetRandomSample(modelID);
+        animationPlayer.GetRandomSample(modelID);
     }
 
     public void SetPort(int newPort)
     {
         port = newPort;
-        currentPlayer.SetPort(newPort);
+        animationPlayer.SetPort(newPort);
     }
 
     public void TogglePortWorkaround()
     {
          usePortWorkAround = !usePortWorkAround;
-         currentPlayer.SetPortWorkAround(usePortWorkAround);
+         animationPlayer.SetPortWorkAround(usePortWorkAround);
     }
 
     public void EnableCamera(){
@@ -250,7 +242,7 @@ public class RESTGUIManager : MonoBehaviour {
 
     public void ToggleCenterCamera()
     {
-        var root = currentPlayer.avatar.root;
+        var root = animationPlayer.avatar.root;
         centerCamera = !centerCamera &&  root!= null;
         if (centerCamera)
         {
@@ -271,12 +263,12 @@ public class RESTGUIManager : MonoBehaviour {
     void SetURL(string newURL){
 
         url = newURL;
-        currentPlayer.SetURL(newURL);
+        animationPlayer.SetURL(newURL);
     }
     
     public void SetProtocol(string newProtocol){
         protocol = newProtocol;
-        currentPlayer.SetProtocol(protocol);
+        animationPlayer.SetProtocol(protocol);
     }
     
     void LoadScene(string clipID)
