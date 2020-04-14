@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mosi_app_unity_mocap", "Assembly-CSharp.csproj", "{ED5FAE09-AA8C-F784-00CD-FEBB59C99EDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mosi_app_unity_mocap", "Assembly-CSharp-firstpass.csproj", "{88A59B82-EE4F-7CE0-B924-D82B4D5D4E41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED5FAE09-AA8C-F784-00CD-FEBB59C99EDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED5FAE09-AA8C-F784-00CD-FEBB59C99EDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED5FAE09-AA8C-F784-00CD-FEBB59C99EDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED5FAE09-AA8C-F784-00CD-FEBB59C99EDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88A59B82-EE4F-7CE0-B924-D82B4D5D4E41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88A59B82-EE4F-7CE0-B924-D82B4D5D4E41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88A59B82-EE4F-7CE0-B924-D82B4D5D4E41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88A59B82-EE4F-7CE0-B924-D82B4D5D4E41}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
+	EndGlobalSection
+EndGlobal
