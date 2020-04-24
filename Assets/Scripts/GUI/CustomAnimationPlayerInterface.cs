@@ -17,6 +17,7 @@ namespace MotionDatabaseInterface
         public Toggle meshToggle;
         void Start()
         {
+            Debug.Log("Start point 1");
             avatar = GetComponent<CustomAnimationPlayer>();
             isLoading = false;
         }
@@ -44,7 +45,7 @@ namespace MotionDatabaseInterface
         }
         protected void handleAnnotation(string response)
         {
-            Debug.Log("reveiced annotation");
+            Debug.Log("received annotation");
             avatar.ProcessAnnotationString(response);
 
 
@@ -62,6 +63,7 @@ namespace MotionDatabaseInterface
                 message = "{ \"skeleton_type\": \"" + skeletonType + "\"}";
             }
             StartCoroutine(LoadAndRequest("get_skeleton", message, handleSkeleton));
+            
         }
 
 

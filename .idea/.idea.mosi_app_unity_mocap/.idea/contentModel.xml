@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Anindita\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Anindita\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_mosi_app_unity_mocap.683745814.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Anindita\DFKI_work\motion_database_unity_client" t="IncludeRecursive">
+      <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Scenes" t="Include">
+          <e p="Checkerboard.shader" t="Include" />
+        </e>
+        <e p="Scripts" t="Include">
+          <e p="CameraController.cs" t="Include" />
+          <e p="GUI" t="Include">
+            <e p="CallRestAPI.cs" t="Include" />
+            <e p="CustomAnimationPlayerInterface.cs" t="Include" />
+            <e p="RESTGUIManager.cs" t="Include" />
+            <e p="TogglePlayButton.cs" t="Include" />
+          </e>
+          <e p="MotionDatabase" t="Include">
+            <e p="CAnimationClip.cs" t="Include" />
+            <e p="CKeyframe.cs" t="Include" />
+            <e p="CPose.cs" t="Include" />
+            <e p="CustomAnimationPlayer.cs" t="Include" />
+            <e p="JointDesc.cs" t="Include" />
+            <e p="JointHierarchyBuilder.cs" t="Include" />
+            <e p="MGJoint.cs" t="Include" />
+            <e p="RESTInterface.cs" t="Include" />
+            <e p="SkeletonDesc.cs" t="Include" />
+            <e p="SkeletonManager.cs" t="Include" />
+          </e>
+        </e>
+        <e p="ThirdParty" t="Include">
+          <e p="JsonDotNet" t="Include">
+            <e p="link.xml" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="mosi_app_unity_mocap.sln" t="IncludeFlat" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="Temp\bin" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>

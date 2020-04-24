@@ -4,14 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using MotionDatabaseInterface;
 using UnityEngine.SceneManagement;
+using Siccity.GLTFUtility;
 
 [System.Serializable]
 public class AvatarDefinition
 {
     public string name;
     public string skeletonType;
-    public Transform rootTransform;
-    public GameObject geometry;
+  //  public Transform rootTransform;
+   // public GameObject geometry;
+    
 }
 
 public class RESTGUIManager : MonoBehaviour {
@@ -21,6 +23,7 @@ public class RESTGUIManager : MonoBehaviour {
     public bool usePortWorkAround;
     public CustomAnimationPlayerInterface animationPlayer;
     public List<AvatarDefinition> avatars;
+  //  public List<string> avatars;
     public bool userInteraction;
     public Text animationTitle;
     public Text frameCountText;
@@ -36,6 +39,11 @@ public class RESTGUIManager : MonoBehaviour {
     public bool initialized;
     bool centerCamera = false;
     public int modelIndex;
+    
+    public string method1 = "get_GLB_list";
+    public string method2 = "get_binary";
+    GameObject abc = null;
+    List<GameObject> generatedObjects = new List<GameObject>();
     // Use this for initialization
     void Start()
     {
@@ -46,18 +54,41 @@ public class RESTGUIManager : MonoBehaviour {
         animationPlayer.SetPortWorkAround(usePortWorkAround);
         initialized = false;
         centerCamera = false;
+        string WEB_URL = animationPlayer.protocol + "://" + animationPlayer.url + ":" + animationPlayer.port + "/";
+        Debug.Log(WEB_URL);
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
-     
+        string methodURL1 = WEB_URL + method1;
+		string methodURL2 = WEB_URL + method2;
+		string temp = "";
+        
         #if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput = false;
         #endif
        
         #if UNITY_EDITOR
-            GetSkeleton();
-        #endif
-        fillAvatarList();
-    }
+       // GetSkeleton();
+       StartCoroutine(CallRestAPI.Instance.Get(methodURL1, (stringArray) =>
+       {
+           temp = stringArray;
+           Debug.Log(temp);
 
+           string[] words = temp.Split('"');
+
+           for (int i = 1; i < words.Length; i = i + 2)
+           {
+               string word = words[i];
+             //  Debug.Log(word);
+               //avatars.Add(word);
+               avatars.Add(new AvatarDefinition{name =  word, skeletonType =  "mh_cmu"});
+           }
+           fillAvatarList();
+       }));
+       
+        #endif
+       
+
+    }
+   
     // Update is called once per frame
     void Update()
     {
@@ -83,7 +114,19 @@ public class RESTGUIManager : MonoBehaviour {
         }
     }
 
-
+    void ClearingScene()
+    {
+        
+        Debug.Log(generatedObjects.Count);
+        for (int i = 0; i < generatedObjects.Count; ++i)
+        {
+            if (generatedObjects[i] != null)
+            {
+                Destroy(generatedObjects[i]);
+            }
+        }
+        generatedObjects.Clear();
+    }
 
     public void OnBeginSliderDrag()
     {
@@ -133,24 +176,45 @@ public class RESTGUIManager : MonoBehaviour {
     }
 
     public void OnChangeModel(){
+        string WEB_URL = animationPlayer.protocol + "://" + animationPlayer.url + ":" + animationPlayer.port + "/";
+        string methodURL2 = WEB_URL + method2; 
+        byte[] temp;
         int newModelIdx = modelDropdown.value;
-        if (newModelIdx >= 0 && newModelIdx < avatars.Count){
+        
+        if (newModelIdx >= 0 && newModelIdx < avatars.Count)
+        {
             modelIndex = newModelIdx;
+            GetSkeleton();
+            ClearingScene();
+            
+            
+            
+            string value = avatars[modelIndex].name;
+            StartCoroutine(CallRestAPI.Instance.Get_model_from_binary(methodURL2, value, (stringArray) =>
+            {
+                temp = stringArray;
+                animationPlayer.avatar.skeleton = Importer.LoadFromBytes(temp);
+                generatedObjects.Add(animationPlayer.avatar.skeleton);
+                
+                animationPlayer.avatar.rootTransform = animationPlayer.avatar.skeleton.transform;
+                
+            }));
+            /*
             animationPlayer.SetAvatarMesh(avatars[modelIndex].rootTransform, avatars[modelIndex].geometry);
-
             avatars[modelIndex].geometry.SetActive(true);
-            if (animationPlayer.avatar != null){
+            if (animationPlayer.avatar != null)
+            {
                 animationPlayer.avatar.playAnimation = false;
             }
-            GetSkeleton();
+            */
         }
-
     }
-
+   
     public void fillAvatarList()
     {
         modelDropdown.ClearOptions();
         var options = new List<Dropdown.OptionData>();
+
         foreach (var a in avatars)
         {
             var o = new Dropdown.OptionData();
