@@ -62,23 +62,35 @@ namespace Siccity.GLTFUtility {
 			if (inverseBindMatrices.HasValue) {
 				result.inverseBindMatrices = accessors[inverseBindMatrices.Value].ReadMatrix4x4();
 				for (int i = 0; i < result.inverseBindMatrices.Length; i++) {
-					// Flip the matrix from GLTF to Unity format. This was done through trial and error, i can't explain it.
-					Matrix4x4 m = result.inverseBindMatrices[i];
-					Vector4 row0 = m.GetRow(0);
-					row0.z = -row0.z;
-					Vector4 row1 = m.GetRow(1);
-					row1.z = -row1.z;
-					Vector4 row2 = m.GetRow(2);
-					row2.x = -row2.x;
-					row2.y = -row2.y;
-					Vector4 row3 = m.GetRow(3);
-					row3.z = -row3.z;
-					m.SetColumn(0, row0);
-					m.SetColumn(1, row1);
-					m.SetColumn(2, row2);
-					m.SetColumn(3, row3);
-					result.inverseBindMatrices[i] = m;
-				}
+					// Flip the matrix from GLTF to Unity format.
+					Matrix4x4 m = result.inverseBindMatrices[i].transpose;
+                   
+                    Matrix4x4 transform_m = new Matrix4x4();
+                    transform_m.m00 = -1;
+                    transform_m.m01 = 0;
+                    transform_m.m02 = 0;
+                    transform_m.m03 = 0;
+
+                    transform_m.m10 = 0;
+                    transform_m.m11 = 1;
+                    transform_m.m12 = 0;
+                    transform_m.m13 = 0;
+
+                    transform_m.m20 = 0;
+                    transform_m.m21 = 0;
+                    transform_m.m22 = 1;
+                    transform_m.m23 = 0;
+
+                    transform_m.m30 = 0;
+                    transform_m.m31 = 0;
+                    transform_m.m32 = 0;
+                    transform_m.m33 = 0;
+                    Vector4 t = m.GetColumn(3);
+                    m = transform_m * m * transform_m;
+                    t.x = -t.x;
+                    m.SetColumn(3, t);
+                    result.inverseBindMatrices[i] = m;
+                }
 			}
 			return result;
 		}
