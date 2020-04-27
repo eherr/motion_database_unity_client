@@ -71,7 +71,7 @@ namespace Siccity.GLTFUtility {
 
 							// Verts - (Z points backwards in GLTF)
 							if (primitive.attributes.POSITION.HasValue) {
-								IEnumerable<Vector3> newVerts = accessors[primitive.attributes.POSITION.Value].ReadVec3().Select(v => { v.z = -v.z; return v; });
+								IEnumerable<Vector3> newVerts = accessors[primitive.attributes.POSITION.Value].ReadVec3().Select(v => { v.x = -v.x; return v; });
 								verts.AddRange(newVerts);
 							}
 
@@ -85,7 +85,7 @@ namespace Siccity.GLTFUtility {
 
 							/// Normals - (Z points backwards in GLTF)
 							if (primitive.attributes.NORMAL.HasValue) {
-								normals.AddRange(accessors[primitive.attributes.NORMAL.Value].ReadVec3().Select(v => { v.z = -v.z; return v; }));
+								normals.AddRange(accessors[primitive.attributes.NORMAL.Value].ReadVec3().Select(v => {  return v; }));
 							}
 
 							// Tangents - (Z points backwards in GLTF)
