@@ -66,7 +66,7 @@ public class RESTGUIManager : MonoBehaviour {
         #endif
        
         #if UNITY_EDITOR
-       // GetSkeleton();
+       GetSkeleton();
        StartCoroutine(CallRestAPI.Instance.Get(methodURL1, (stringArray) =>
        {
            temp = stringArray;
