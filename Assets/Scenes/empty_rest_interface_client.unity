@@ -80,7 +80,7 @@ MonoBehaviour:
   clipID: 1121
   loadIcon: {fileID: 1520814383}
   player: {fileID: 1237}
-  meshToggle: {fileID: 260602626}
+  avatars: []
   waitingForSkeleton: 0
 --- !u!1 &1629
 GameObject:
@@ -1679,6 +1679,11 @@ PrefabInstance:
       propertyPath: motionDatabase
       value: 
       objectReference: {fileID: 1247}
+    - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: meshToggle
+      value: 
+      objectReference: {fileID: 260602626}
     - target: {fileID: 114707256687473138, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
