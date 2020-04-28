@@ -16,47 +16,27 @@ namespace MotionDatabaseInterface {
         public int frameIdx = 0;
         public Transform rootTransform;
         public GameObject agentGeometry;
-        public MGJoint root=null;
+        public MGJoint root = null;
         public bool loop = false;
         public float frameTime = 0.013889f;
-        [Range(-4.0f, 4.0f)]
+        [Range(0, 4.0f)]
         public float speedFactor = 1.0f;
         public float scaleFactor = 0.01f;
         public float animationTime = 0.0f;
         public float maxAnimatTime = 1.0f;
         public bool init = false;
         protected Dictionary<string, int> indexMap;
-        LineRenderer lineRenderer;
-        public float lineWidth = 0.05f;
-        public bool drawLines;
-
-        public Material lineMaterial;
         private bool showMesh = false;
         public GameObject skeleton;
         List<MeshRenderer> rootMeshes;
         List<SkinnedMeshRenderer> agentMeshes;
         SkeletonDesc skeletonDesc;
-
         public string skeletonModel;
-
         int numFrames = 0;
-
         public SkeletonManager skeletonManager;
-
         string skeletonJointTag = "SKELETON_JOINT";
 
         public void Start () {
-            lineRenderer = gameObject.AddComponent<LineRenderer>();
-            if (drawLines) { 
-                lineRenderer.startWidth = lineWidth;
-                lineRenderer.endWidth = lineWidth;
-                lineRenderer.material = lineMaterial;
-                lineRenderer.positionCount = 0;
-            }
-            else
-            {
-                lineRenderer.enabled = false;
-            }
             rootMeshes = new List<MeshRenderer>();
             agentMeshes = new List<SkinnedMeshRenderer>();
             if (rootTransform != null) { 
@@ -112,9 +92,6 @@ namespace MotionDatabaseInterface {
                     }
                 }
             }
-
-            if(!showMesh)
-                DrawDebugSkeleton();
 
         }
                 
@@ -344,18 +321,7 @@ namespace MotionDatabaseInterface {
             }
         }
 
-
-        public void DrawDebugSkeleton()
-        {
-            if (root == null)
-                return;
-            List<Vector3> jointPositions = new List<Vector3>();
-            root.getJointPositions(jointPositions);
-            if (drawLines) { 
-                lineRenderer.positionCount = jointPositions.Count;
-                lineRenderer.SetPositions(jointPositions.ToArray());
-            }
-        }
+        
 
         public List<Vector3> GetJointAngles()
         {
