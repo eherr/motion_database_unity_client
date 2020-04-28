@@ -128,8 +128,11 @@ public class RESTGUIManager : MonoBehaviour {
         motionDatabase.GetMotion();
     }
 
-    public void OnChangeModel(){
+    public void OnChangeModel()
+    {
+        useMesh = true;
         loadAvatar();
+        motionDatabase.meshToggle.SetIsOnWithoutNotify(useMesh);
     }
     public void loadAvatar()
     {
