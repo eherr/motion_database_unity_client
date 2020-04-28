@@ -197,22 +197,37 @@ public class RESTGUIManager : MonoBehaviour {
         return success;
     }
 
+    public void ToggleMesh()
+    {
+        if (animationPlayer.waitingForSkeleton)
+        {
+            Debug.Log("waiting" );
+            animationPlayer.meshToggle.SetIsOnWithoutNotify(useMesh);
+            return;
+        }
+        if (avatars.Count > 0)
+        {
+            useMesh = !useMesh;
+        }else { 
+            useMesh = false;
+        }
+        animationPlayer.meshToggle.SetIsOnWithoutNotify(useMesh);
+        Debug.Log("use mesh"+ useMesh.ToString());
+        if (!useMesh) { 
+            animationPlayer.ToggleAnimation();
+            animationPlayer.avatar.SetAvatarMesh(null, null);
+            animationPlayer.ClearGeneratedObjects();
+            GetSkeleton();
+        }else
+        {
+            loadAvatar();
+        }
+    }
+
 
     public void GetSkeleton()
     { 
 
-        if (HasAvatar(sourceSkeletonModel))
-        {
-            animationPlayer.meshToggle.enabled = false;
-            animationPlayer.meshToggle.isOn = false;
-            animationPlayer.avatar.HideMesh();
-        }else
-        {
-            animationPlayer.meshToggle.enabled = true;
-        }
-        if (animationPlayer.avatar != null){
-            animationPlayer.avatar.DestroySkeleton();
-        }
         animationPlayer.GetSkeleton(sourceSkeletonModel);
     
     }
