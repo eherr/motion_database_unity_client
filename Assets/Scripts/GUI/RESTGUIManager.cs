@@ -19,7 +19,7 @@ public class RESTGUIManager : MonoBehaviour {
     public int port;
     public string url;
     public bool usePortWorkAround;
-    public MotionDatabaseInterface animationPlayer;
+    public MotionDatabaseInterface motionDatabase;
     public List<AvatarDefinition> avatars;
     public bool userInteraction;
     public Text animationTitle;
@@ -46,9 +46,9 @@ public class RESTGUIManager : MonoBehaviour {
     {
         modelIndex = 0;
         userInteraction = false;
-        animationPlayer.SetPort(port);
-        animationPlayer.SetURL(url);
-        animationPlayer.SetPortWorkAround(usePortWorkAround);
+        motionDatabase.SetPort(port);
+        motionDatabase.SetURL(url);
+        motionDatabase.SetPortWorkAround(usePortWorkAround);
         initialized = false;
         centerCamera = false;
         useMesh = false;
@@ -62,7 +62,7 @@ public class RESTGUIManager : MonoBehaviour {
 #if UNITY_EDITOR
 
         GetSkeleton();
-        animationPlayer.GetAvatarList(handleAvatarList);
+        motionDatabase.GetAvatarList(handleAvatarList);
         
 #endif
 
@@ -85,22 +85,22 @@ public class RESTGUIManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (animationPlayer.player == null) return;
+        if (motionDatabase.player == null) return;
         var slider = GetComponentInChildren<Slider>();
         if (userInteraction)
         {
-            animationPlayer.player.SetCurrentFrame((int)slider.value);
-            int currentFrame = animationPlayer.player.frameIdx;
-            int nFrames = animationPlayer.player.GetNumFrames();
+            motionDatabase.player.SetCurrentFrame((int)slider.value);
+            int currentFrame = motionDatabase.player.frameIdx;
+            int nFrames = motionDatabase.player.GetNumFrames();
             frameCountText.text = "Frame: " + currentFrame.ToString() + "/" + nFrames.ToString();
-            animationTitle.text = animationPlayer.player.GetClipTitle();
+            animationTitle.text = motionDatabase.player.GetClipTitle();
         }
         else
         {
-            int currentFrame = animationPlayer.player.frameIdx;
-            int nFrames = animationPlayer.player.GetNumFrames();
+            int currentFrame = motionDatabase.player.frameIdx;
+            int nFrames = motionDatabase.player.GetNumFrames();
             frameCountText.text = "Frame: " + currentFrame.ToString() + "/" + nFrames.ToString();
-            animationTitle.text = animationPlayer.player.GetClipTitle();
+            animationTitle.text = motionDatabase.player.GetClipTitle();
 
             slider.maxValue = nFrames;
             slider.value = currentFrame;
@@ -119,16 +119,16 @@ public class RESTGUIManager : MonoBehaviour {
     }
 
     public bool IsPlaying(){
-        if (animationPlayer.player != null){
+        if (motionDatabase.player != null){
             return false;
         }else{
-            return animationPlayer.player.playAnimation;
+            return motionDatabase.player.playAnimation;
         }
     }
 
     public void ToggleAnimation()
     {
-         animationPlayer.ToggleAnimation();
+         motionDatabase.ToggleAnimation();
     }
 
     public void ToggleModelPanel()
@@ -151,7 +151,7 @@ public class RESTGUIManager : MonoBehaviour {
 
     public void GetMotion()
     {
-        animationPlayer.GetMotion();
+        motionDatabase.GetMotion();
     }
 
     public void OnChangeModel(){
@@ -164,8 +164,8 @@ public class RESTGUIManager : MonoBehaviour {
         {
             modelIndex = newModelIdx;
             GetSkeleton();
-            animationPlayer.ClearGeneratedObjects();
-            animationPlayer.LoadAvatar(avatars[modelIndex].name);
+            motionDatabase.ClearGeneratedObjects();
+            motionDatabase.LoadAvatar(avatars[modelIndex].name);
         }
     }
    
@@ -199,10 +199,10 @@ public class RESTGUIManager : MonoBehaviour {
 
     public void ToggleMesh()
     {
-        if (animationPlayer.waitingForSkeleton)
+        if (motionDatabase.waitingForSkeleton)
         {
             Debug.Log("waiting" );
-            animationPlayer.meshToggle.SetIsOnWithoutNotify(useMesh);
+            motionDatabase.meshToggle.SetIsOnWithoutNotify(useMesh);
             return;
         }
         if (avatars.Count > 0)
@@ -211,12 +211,12 @@ public class RESTGUIManager : MonoBehaviour {
         }else { 
             useMesh = false;
         }
-        animationPlayer.meshToggle.SetIsOnWithoutNotify(useMesh);
+        motionDatabase.meshToggle.SetIsOnWithoutNotify(useMesh);
         Debug.Log("use mesh"+ useMesh.ToString());
         if (!useMesh) { 
-            animationPlayer.ToggleAnimation();
-            animationPlayer.player.SetAvatarMesh(null, null);
-            animationPlayer.ClearGeneratedObjects();
+            motionDatabase.ToggleAnimation();
+            motionDatabase.player.SetAvatarMesh(null, null);
+            motionDatabase.ClearGeneratedObjects();
             GetSkeleton();
         }else
         {
@@ -228,7 +228,7 @@ public class RESTGUIManager : MonoBehaviour {
     public void GetSkeleton()
     { 
 
-        animationPlayer.GetSkeleton(sourceSkeletonModel);
+        motionDatabase.GetSkeleton(sourceSkeletonModel);
     
     }
 
@@ -245,25 +245,25 @@ public class RESTGUIManager : MonoBehaviour {
 
    public void GetMotionByID(string clipID)
     {
-       animationPlayer.GetMotionByID(clipID);
+       motionDatabase.GetMotionByID(clipID);
     }
 
 
     public void GetRandomSample(string modelID)
     {
-        animationPlayer.GetRandomSample(modelID);
+        motionDatabase.GetRandomSample(modelID);
     }
 
     public void SetPort(int newPort)
     {
         port = newPort;
-        animationPlayer.SetPort(newPort);
+        motionDatabase.SetPort(newPort);
     }
 
     public void TogglePortWorkaround()
     {
          usePortWorkAround = !usePortWorkAround;
-         animationPlayer.SetPortWorkAround(usePortWorkAround);
+         motionDatabase.SetPortWorkAround(usePortWorkAround);
     }
 
     public void EnableCamera(){
@@ -280,7 +280,7 @@ public class RESTGUIManager : MonoBehaviour {
 
     public void ToggleCenterCamera()
     {
-        var root = animationPlayer.player.root;
+        var root = motionDatabase.player.root;
         centerCamera = !centerCamera &&  root!= null;
         if (centerCamera)
         {
@@ -301,12 +301,12 @@ public class RESTGUIManager : MonoBehaviour {
     void SetURL(string newURL){
 
         url = newURL;
-        animationPlayer.SetURL(newURL);
+        motionDatabase.SetURL(newURL);
     }
     
     public void SetProtocol(string newProtocol){
         protocol = newProtocol;
-        animationPlayer.SetProtocol(protocol);
+        motionDatabase.SetProtocol(protocol);
     }
     
     void LoadScene(string clipID)
