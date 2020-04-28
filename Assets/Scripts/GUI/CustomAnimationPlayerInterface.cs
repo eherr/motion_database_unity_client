@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.UI;
+using Siccity.GLTFUtility;
+
 
 namespace MotionDatabaseInterface
 {
@@ -15,24 +16,22 @@ namespace MotionDatabaseInterface
         public CustomAnimationPlayer avatar;
         private bool isLoading;
         public Toggle meshToggle;
+        List<GameObject> generatedObjects = new List<GameObject>();
+        public bool waitingForSkeleton = false;
         void Start()
         {
             Debug.Log("Start point 1");
             avatar = GetComponent<CustomAnimationPlayer>();
             isLoading = false;
+            waitingForSkeleton = false;
         }
 
 
         void handleSkeleton(string response)
         {
-            if (meshToggle.isOn) {
-                avatar.ShowMesh();
-            } else
-            {
-                avatar.HideMesh();
-            }
             
             avatar.ProcessSkeletonString(response);
+            waitingForSkeleton = false;
         }
 
 
@@ -62,6 +61,7 @@ namespace MotionDatabaseInterface
             if (skeletonType!= "") { 
                 message = "{ \"skeleton_type\": \"" + skeletonType + "\"}";
             }
+            waitingForSkeleton = true;
             StartCoroutine(LoadAndRequest("get_skeleton", message, handleSkeleton));
             
         }
@@ -89,7 +89,18 @@ namespace MotionDatabaseInterface
             StartCoroutine(LoadAndRequestBytes("get_sample", message, handleMotion));
         }
 
+        public void LoadAvatar(string name)
+        {
+            print("Get avatar " + name);
+            var message = name;// "{ \"name\": \"" + name + "\"}";
+            StartCoroutine(LoadAndRequestBytes("get_binary", message, handleAvatar));
+        }
 
+        public void GetAvatarList(System.Action<string> callback)
+        {
+            print("Get avatar list");
+            StartCoroutine(GetRequest("get_GLB_list", callback));
+        }
 
         public void GetAnnotation()
         {
@@ -138,9 +149,16 @@ namespace MotionDatabaseInterface
             GetSkeleton();
         }
 
+        protected IEnumerator GetRequest(string method, System.Action<string> callback)
+        {
+            Debug.Log("GET request!");
+            yield return StartCoroutine(sendGETRequestCoroutine(method, callback));
+        }
+
+
         protected IEnumerator LoadAndRequest(string method, string messageBody, PostRequestCallback callback)
         {
-            Debug.Log("Loading request!");
+            Debug.Log("POST request!");
             yield return StartCoroutine(Fade(1f));
             loadIcon.blocksRaycasts = true;
 
@@ -149,6 +167,7 @@ namespace MotionDatabaseInterface
             loadIcon.blocksRaycasts = false;
             yield return StartCoroutine(Fade(0f));
         }
+
         protected IEnumerator LoadAndRequestBytes(string method, string messageBody, BytePostRequestCallback callback)
         {
             Debug.Log("Loading request!");
@@ -176,9 +195,36 @@ namespace MotionDatabaseInterface
             isLoading = false;
             Debug.Log("Finish Fade");
         }
-        public void SetAvatarMesh(Transform newRoot, GameObject newGeometry)
+ 
+        protected void handleAvatar(byte[] response)
         {
-            avatar.SetAvatarMesh(newRoot, newGeometry);
+            var model = Importer.LoadFromBytes(response);
+            generatedObjects.Add(model);
+            model.transform.localRotation = Quaternion.identity;
+
+            avatar.SetAvatarMesh(model.transform, null);
+            if (avatar != null)
+            {
+                avatar.playAnimation = false;
+            }
+
+            avatar.ShowMesh();
+            avatar.SetupSkeleton();
+            waitingForSkeleton = false;
+        }
+
+        public void ClearGeneratedObjects()
+        {
+
+            Debug.Log(generatedObjects.Count);
+            for (int i = 0; i < generatedObjects.Count; ++i)
+            {
+                if (generatedObjects[i] != null)
+                {
+                    Destroy(generatedObjects[i]);
+                }
+            }
+            generatedObjects.Clear();
         }
 
     }
