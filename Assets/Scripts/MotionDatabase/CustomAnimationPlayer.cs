@@ -63,13 +63,11 @@ namespace MotionDatabaseInterface {
                     frameIdx = numFrames-1;
                 }
                 Vector3 pos = motion.getRootTranslation(frameIdx);
-                if (skeleton != null)
+                if (rootTransform != null)
                 {
                     var rootDesc = skeletonDesc.jointDescs[0];
                     Vector3 offset = new Vector3(rootDesc.offset[0],rootDesc.offset[1],rootDesc.offset[2]);
-                    skeleton.transform.position = pos + offset*scaleFactor;// skeletonDesc.referencePose.translations[0];
-                }else{
-                    gameObject.transform.position = pos;
+                    rootTransform.position = pos + offset*scaleFactor;// skeletonDesc.referencePose.translations[0];
                 }
                 root.setPose(motion.getPose(frameIdx), indexMap);
                 //Debug.Log("update animation"+ frameIdx.ToString() + speedFactor.ToString() + maxAnimatTime.ToString() + playAnimation.ToString()+ frameTime.ToString());
@@ -280,8 +278,10 @@ namespace MotionDatabaseInterface {
                 Debug.Log("init skeleton from existing character");
             }
             else{
+                skeletonDesc.referencePose.ScaleTranslations(scaleFactor);
            
                 skeleton = skeletonManager.GetSkeleton(skeletonDesc);
+                rootTransform = skeleton.transform;
                 root = skeletonManager.GetRootJoint(skeletonDesc);
                 skeletonManager.ShowSkeleton(skeletonDesc.name); 
                 root.setPose(skeletonDesc.referencePose, indexMap);
@@ -289,7 +289,7 @@ namespace MotionDatabaseInterface {
                     var t = skeletonDesc.referencePose.translations[0];
                     var rootDesc = skeletonDesc.jointDescs[0];
                     Vector3 offset = new Vector3(rootDesc.offset[0],rootDesc.offset[1],rootDesc.offset[2]);
-                    skeleton.transform.position = t + offset*scaleFactor;
+                    rootTransform.position = t + offset*scaleFactor;
                 }
                 Debug.Log("generated skeleton");
             }
