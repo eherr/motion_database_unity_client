@@ -24,6 +24,7 @@ public class RESTGUIManager : MonoBehaviour {
     public GameObject settingsPanel;
 
     public Dropdown modelDropdown;
+    public Toggle meshToggle;
     public CameraController cameraController;
 
     public string sourceSkeletonModel;
@@ -132,7 +133,7 @@ public class RESTGUIManager : MonoBehaviour {
     {
         useMesh = true;
         loadAvatar();
-        motionDatabase.meshToggle.SetIsOnWithoutNotify(useMesh);
+        meshToggle.SetIsOnWithoutNotify(useMesh);
     }
     public void loadAvatar()
     {
@@ -166,7 +167,7 @@ public class RESTGUIManager : MonoBehaviour {
         if (motionDatabase.waitingForSkeleton)
         {
             Debug.Log("waiting" );
-            motionDatabase.meshToggle.SetIsOnWithoutNotify(useMesh);
+            meshToggle.SetIsOnWithoutNotify(useMesh);
             return;
         }
         if (motionDatabase.avatars.Count > 0)
@@ -175,7 +176,7 @@ public class RESTGUIManager : MonoBehaviour {
         }else { 
             useMesh = false;
         }
-        motionDatabase.meshToggle.SetIsOnWithoutNotify(useMesh);
+        meshToggle.SetIsOnWithoutNotify(useMesh);
         Debug.Log("use mesh"+ useMesh.ToString());
         if (!useMesh) { 
             motionDatabase.ToggleAnimation();

@@ -16,7 +16,6 @@ namespace MotionDatabase
         public CustomAnimationPlayer player;
         public List<AvatarDefinition> avatars;
         private bool isLoading;
-        public Toggle meshToggle;
         List<GameObject> generatedObjects = new List<GameObject>();
         public bool waitingForSkeleton = false;
         public delegate void dgEventRaiser();
