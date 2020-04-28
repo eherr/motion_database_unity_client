@@ -13,7 +13,7 @@ namespace MotionDatabaseInterface
     {
         public string clipID;
         public CanvasGroup loadIcon;
-        public CustomAnimationPlayer avatar;
+        public CustomAnimationPlayer player;
         private bool isLoading;
         public Toggle meshToggle;
         List<GameObject> generatedObjects = new List<GameObject>();
@@ -21,7 +21,7 @@ namespace MotionDatabaseInterface
         void Start()
         {
             Debug.Log("Start point 1");
-            avatar = GetComponent<CustomAnimationPlayer>();
+            player = GetComponent<CustomAnimationPlayer>();
             isLoading = false;
             waitingForSkeleton = false;
         }
@@ -30,14 +30,14 @@ namespace MotionDatabaseInterface
         void handleSkeleton(string response)
         {
             
-            avatar.ProcessSkeletonString(response);
+            player.ProcessSkeletonString(response);
             waitingForSkeleton = false;
         }
 
 
         protected void handleMotion(byte[] response)
         {
-          avatar.ProcessMotionBytes(response, Vector3.zero);
+          player.ProcessMotionBytes(response, Vector3.zero);
           GetAnnotation();
 
 
@@ -45,17 +45,16 @@ namespace MotionDatabaseInterface
         protected void handleAnnotation(string response)
         {
             Debug.Log("received annotation");
-            avatar.ProcessAnnotationString(response);
+            player.ProcessAnnotationString(response);
 
 
         }
 
 
-
         public void GetSkeleton(string skeletonType="")
         {
-            if (avatar != null);
-                avatar.clearMotion();
+            if (player != null);
+                player.clearMotion();
             print("Get skeleton");
             var message = "{}";
             if (skeletonType!= "") { 
@@ -135,7 +134,7 @@ namespace MotionDatabaseInterface
         }
         public void ToggleAnimation()
         {
-            avatar.ToggleAnimation();
+            player.ToggleAnimation();
         }
 
 
@@ -202,14 +201,14 @@ namespace MotionDatabaseInterface
             generatedObjects.Add(model);
             model.transform.localRotation = Quaternion.identity;
 
-            avatar.SetAvatarMesh(model.transform, null);
-            if (avatar != null)
+            player.SetAvatarMesh(model.transform, null);
+            if (player != null)
             {
-                avatar.playAnimation = false;
+                player.playAnimation = false;
             }
 
-            avatar.ShowMesh();
-            avatar.SetupSkeleton();
+            player.ShowMesh();
+            player.SetupSkeleton();
             waitingForSkeleton = false;
         }
 

@@ -85,22 +85,22 @@ public class RESTGUIManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (animationPlayer.avatar == null) return;
+        if (animationPlayer.player == null) return;
         var slider = GetComponentInChildren<Slider>();
         if (userInteraction)
         {
-            animationPlayer.avatar.SetCurrentFrame((int)slider.value);
-            int currentFrame = animationPlayer.avatar.frameIdx;
-            int nFrames = animationPlayer.avatar.GetNumFrames();
+            animationPlayer.player.SetCurrentFrame((int)slider.value);
+            int currentFrame = animationPlayer.player.frameIdx;
+            int nFrames = animationPlayer.player.GetNumFrames();
             frameCountText.text = "Frame: " + currentFrame.ToString() + "/" + nFrames.ToString();
-            animationTitle.text = animationPlayer.avatar.GetClipTitle();
+            animationTitle.text = animationPlayer.player.GetClipTitle();
         }
         else
         {
-            int currentFrame = animationPlayer.avatar.frameIdx;
-            int nFrames = animationPlayer.avatar.GetNumFrames();
+            int currentFrame = animationPlayer.player.frameIdx;
+            int nFrames = animationPlayer.player.GetNumFrames();
             frameCountText.text = "Frame: " + currentFrame.ToString() + "/" + nFrames.ToString();
-            animationTitle.text = animationPlayer.avatar.GetClipTitle();
+            animationTitle.text = animationPlayer.player.GetClipTitle();
 
             slider.maxValue = nFrames;
             slider.value = currentFrame;
@@ -119,10 +119,10 @@ public class RESTGUIManager : MonoBehaviour {
     }
 
     public bool IsPlaying(){
-        if (animationPlayer.avatar != null){
+        if (animationPlayer.player != null){
             return false;
         }else{
-            return animationPlayer.avatar.playAnimation;
+            return animationPlayer.player.playAnimation;
         }
     }
 
@@ -215,7 +215,7 @@ public class RESTGUIManager : MonoBehaviour {
         Debug.Log("use mesh"+ useMesh.ToString());
         if (!useMesh) { 
             animationPlayer.ToggleAnimation();
-            animationPlayer.avatar.SetAvatarMesh(null, null);
+            animationPlayer.player.SetAvatarMesh(null, null);
             animationPlayer.ClearGeneratedObjects();
             GetSkeleton();
         }else
@@ -280,7 +280,7 @@ public class RESTGUIManager : MonoBehaviour {
 
     public void ToggleCenterCamera()
     {
-        var root = animationPlayer.avatar.root;
+        var root = animationPlayer.player.root;
         centerCamera = !centerCamera &&  root!= null;
         if (centerCamera)
         {
