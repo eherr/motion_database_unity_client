@@ -7,7 +7,7 @@ using UnityEngine.AI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 
-namespace MotionDatabaseInterface { 
+namespace MotionDatabase { 
     public class CustomAnimationPlayer : MonoBehaviour
     {
    
@@ -67,10 +67,10 @@ namespace MotionDatabaseInterface {
                 {
                     var rootDesc = skeletonDesc.jointDescs[0];
                     Vector3 offset = new Vector3(rootDesc.offset[0],rootDesc.offset[1],rootDesc.offset[2]);
-                    rootTransform.position = pos + offset*scaleFactor;// skeletonDesc.referencePose.translations[0];
+                    rootTransform.position = pos + offset*scaleFactor;
                 }
                 root.setPose(motion.getPose(frameIdx), indexMap);
-                //Debug.Log("update animation"+ frameIdx.ToString() + speedFactor.ToString() + maxAnimatTime.ToString() + playAnimation.ToString()+ frameTime.ToString());
+              
                 if (playAnimation)
                 {
                     animationTime += Time.deltaTime * speedFactor;
@@ -123,7 +123,7 @@ namespace MotionDatabaseInterface {
         {
 
             string oldSkeletonModel = motion.skeletonModel;
-            //motion = JsonUtility.FromJson<CAnimationClipSmall>(motionString);
+            
             motion = JsonConvert.DeserializeObject<CAnimationClip>(motionString);
             motion.scaleTranslations(scaleFactor);
             motion.translateFrames(offset);
@@ -135,7 +135,7 @@ namespace MotionDatabaseInterface {
             numFrames = motion.GetNumFrames();
             maxAnimatTime = numFrames * frameTime;
             init = true;
-            //Debug.Log("processed motion "+ this.motion.frames.Length.ToString());
+            
         }
 
         /// <summary>

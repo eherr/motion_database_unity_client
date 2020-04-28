@@ -2,7 +2,7 @@
 using UnityEngine;
 using System;
 
-namespace MotionDatabaseInterface {
+namespace MotionDatabase {
 
     public class MGJoint
     {

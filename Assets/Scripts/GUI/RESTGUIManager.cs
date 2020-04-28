@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using MotionDatabaseInterface;
+using MotionDatabase;
 using UnityEngine.SceneManagement;
 using Siccity.GLTFUtility;
 
@@ -19,7 +19,7 @@ public class RESTGUIManager : MonoBehaviour {
     public int port;
     public string url;
     public bool usePortWorkAround;
-    public CustomAnimationPlayerInterface animationPlayer;
+    public MotionDatabaseInterface animationPlayer;
     public List<AvatarDefinition> avatars;
     public bool userInteraction;
     public Text animationTitle;

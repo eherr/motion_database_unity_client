@@ -5,7 +5,7 @@ using System.IO;
 using System.Net;
 using UnityEngine.Networking;
 
-namespace MotionDatabaseInterface
+namespace MotionDatabase
 {
 	public delegate void PostRequestCallback(string response);
 

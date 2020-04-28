@@ -1,4 +1,4 @@
-﻿namespace MotionDatabaseInterface {
+﻿namespace MotionDatabase {
 	[System.Serializable]
 	public class JointDesc
 	{

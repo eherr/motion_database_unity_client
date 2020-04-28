@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace MotionDatabaseInterface {
+namespace MotionDatabase {
 	public class JointHierarchyBuilder
 	{
 		public SkeletonDesc skeletonDescription;

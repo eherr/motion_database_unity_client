@@ -5,11 +5,11 @@ using UnityEngine.UI;
 using Siccity.GLTFUtility;
 
 
-namespace MotionDatabaseInterface
+namespace MotionDatabase
 {
 
     [RequireComponent(typeof(CustomAnimationPlayer))]
-    public class CustomAnimationPlayerInterface : RESTInterface
+    public class MotionDatabaseInterface : RESTInterface
     {
         public string clipID;
         public CanvasGroup loadIcon;
@@ -20,7 +20,6 @@ namespace MotionDatabaseInterface
         public bool waitingForSkeleton = false;
         void Start()
         {
-            Debug.Log("Start point 1");
             player = GetComponent<CustomAnimationPlayer>();
             isLoading = false;
             waitingForSkeleton = false;
