@@ -14,10 +14,13 @@ namespace MotionDatabase
         public string clipID;
         public CanvasGroup loadIcon;
         public CustomAnimationPlayer player;
+        public List<AvatarDefinition> avatars;
         private bool isLoading;
         public Toggle meshToggle;
         List<GameObject> generatedObjects = new List<GameObject>();
         public bool waitingForSkeleton = false;
+        public delegate void dgEventRaiser();
+        public event dgEventRaiser OnNewAvatarList;
         void Start()
         {
             player = GetComponent<CustomAnimationPlayer>();
@@ -94,10 +97,10 @@ namespace MotionDatabase
             StartCoroutine(LoadAndRequestBytes("get_binary", message, handleAvatar));
         }
 
-        public void GetAvatarList(System.Action<string> callback)
+        public void GetAvatarList()
         {
             print("Get avatar list");
-            StartCoroutine(GetRequest("get_GLB_list", callback));
+            StartCoroutine(GetRequest("get_GLB_list", handleAvatarList));
         }
 
         public void GetAnnotation()
@@ -225,6 +228,19 @@ namespace MotionDatabase
             generatedObjects.Clear();
         }
 
+        void handleAvatarList(string stringArray)
+        {
+
+            string[] words = stringArray.Split('"');
+
+            for (int i = 1; i < words.Length; i = i + 2)
+            {
+                string word = words[i];
+                avatars.Add(new AvatarDefinition { name = word, skeletonType = "mh_cmu" });
+            }
+            OnNewAvatarList();
+
+        }
     }
 
 }

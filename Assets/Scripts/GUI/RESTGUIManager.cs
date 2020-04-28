@@ -15,8 +15,8 @@ public class AvatarDefinition
 }
 
 public class RESTGUIManager : MonoBehaviour {
+  
     public MotionDatabaseInterface motionDatabase;
-    public List<AvatarDefinition> avatars;
     public bool userInteraction;
     public Text animationTitle;
     public Text frameCountText;
@@ -24,8 +24,6 @@ public class RESTGUIManager : MonoBehaviour {
     public GameObject settingsPanel;
 
     public Dropdown modelDropdown;
-    
-
     public CameraController cameraController;
 
     public string sourceSkeletonModel;
@@ -45,34 +43,17 @@ public class RESTGUIManager : MonoBehaviour {
         initialized = false;
         centerCamera = false;
         useMesh = false;
-
+        motionDatabase.OnNewAvatarList += fillAvatarList;
+        motionDatabase.GetAvatarList();
 
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
 #if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput = false;
 #endif
-
 #if UNITY_EDITOR
-
         GetSkeleton();
-        motionDatabase.GetAvatarList(handleAvatarList);
-        
 #endif
 
-
-    }
-    void handleAvatarList(string stringArray)
-    {
-       
-        string[] words = stringArray.Split('"');
-
-        for (int i = 1; i < words.Length; i = i + 2)
-        {
-            string word = words[i];
-            avatars.Add(new AvatarDefinition { name = word, skeletonType = "mh_cmu" });
-        }
-        fillAvatarList();
-       
     }
 
     // Update is called once per frame
@@ -153,12 +134,12 @@ public class RESTGUIManager : MonoBehaviour {
     public void loadAvatar()
     {
         int newModelIdx = modelDropdown.value;
-        if (newModelIdx >= 0 && newModelIdx < avatars.Count)
+        if (newModelIdx >= 0 && newModelIdx < motionDatabase.avatars.Count)
         {
             modelIndex = newModelIdx;
             GetSkeleton();
             motionDatabase.ClearGeneratedObjects();
-            motionDatabase.LoadAvatar(avatars[modelIndex].name);
+            motionDatabase.LoadAvatar(motionDatabase.avatars[modelIndex].name);
         }
     }
    
@@ -167,7 +148,7 @@ public class RESTGUIManager : MonoBehaviour {
         modelDropdown.ClearOptions();
         var options = new List<Dropdown.OptionData>();
 
-        foreach (var a in avatars)
+        foreach (var a in motionDatabase.avatars)
         {
             var o = new Dropdown.OptionData();
             o.text = a.name;
@@ -185,7 +166,7 @@ public class RESTGUIManager : MonoBehaviour {
             motionDatabase.meshToggle.SetIsOnWithoutNotify(useMesh);
             return;
         }
-        if (avatars.Count > 0)
+        if (motionDatabase.avatars.Count > 0)
         {
             useMesh = !useMesh;
         }else { 
