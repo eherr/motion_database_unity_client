@@ -51,8 +51,6 @@ namespace MotionDatabaseInterface {
                     agentMeshes.Add(m);
                 }
             }
-
-          
         }
 
         public void Update()
@@ -248,7 +246,6 @@ namespace MotionDatabaseInterface {
                     Destroy(j);
                 }
            }
-
         }
 
 
@@ -263,18 +260,26 @@ namespace MotionDatabaseInterface {
 
         public void ProcessSkeletonString(string skeletonString)
         {
-            if(skeletonManager!= null) skeletonManager.HideSkeletons();
+            if (skeletonManager != null) skeletonManager.HideSkeletons();
             skeletonDesc = JsonUtility.FromJson<SkeletonDesc>(skeletonString);
 
             buildPoseParameterIndexMap(skeletonDesc);
+            SetupSkeleton();
+        }
+
+        public void SetupSkeleton()
+        {
+            if (skeletonDesc == null) return;
+
             if (showMesh)
             {
-                if (skeleton != null) DestroySkeleton();//destroyHierarchy(skeleton.transform);
-                lineRenderer.positionCount = 0;
+                if (skeleton != null) DestroySkeleton();
                 skeletonDesc.referencePose.ScaleTranslations(scaleFactor);
                 initSkeletonFromExistingCharacter(rootTransform, skeletonDesc);
-            }else{
-                skeletonDesc.referencePose.ScaleTranslations(scaleFactor); // * 2.5f
+
+                Debug.Log("init skeleton from existing character");
+            }
+            else{
            
                 skeleton = skeletonManager.GetSkeleton(skeletonDesc);
                 root = skeletonManager.GetRootJoint(skeletonDesc);
@@ -286,8 +291,8 @@ namespace MotionDatabaseInterface {
                     Vector3 offset = new Vector3(rootDesc.offset[0],rootDesc.offset[1],rootDesc.offset[2]);
                     skeleton.transform.position = t + offset*scaleFactor;
                 }
+                Debug.Log("generated skeleton");
             }
-            Debug.Log("processed skeleton");
         }
         public void initSkeletonFromExistingCharacter(Transform rootTransform, SkeletonDesc skeletonDesc)
         {
@@ -338,7 +343,6 @@ namespace MotionDatabaseInterface {
             {
                 return 0;
             }
-            
         }
 
         public void SetCurrentFrame(int newFrameIdx)
@@ -374,13 +378,16 @@ namespace MotionDatabaseInterface {
                 {
                     rootMeshes.Add(s);
                 }
+                if (agentGeometry != null) { 
                 var _agentMeshes = agentGeometry.GetComponentsInChildren<SkinnedMeshRenderer>();
-                foreach (SkinnedMeshRenderer m in _agentMeshes)
-                {
-                    agentMeshes.Add(m);
+                    foreach (SkinnedMeshRenderer m in _agentMeshes)
+                    {
+                        agentMeshes.Add(m);
+                    }
                 }
+                ShowMesh();
             }
-            ShowMesh();
+
         }
     }
 
