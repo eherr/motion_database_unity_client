@@ -57,9 +57,6 @@ MonoBehaviour:
   animationTime: 0
   maxAnimatTime: 1
   init: 0
-  lineWidth: 0.025
-  drawLines: 0
-  lineMaterial: {fileID: 2100000, guid: 24830d743bcb46946b275825955345b8, type: 2}
   skeleton: {fileID: 0}
   skeletonModel: 
   skeletonManager: {fileID: 2111231712}
@@ -84,6 +81,7 @@ MonoBehaviour:
   loadIcon: {fileID: 1520814383}
   avatar: {fileID: 0}
   meshToggle: {fileID: 260602626}
+  waitingForSkeleton: 0
 --- !u!1 &1629
 GameObject:
   m_ObjectHideFlags: 0
@@ -2439,8 +2437,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scale: 0.01
   skeletonJointTag: SKELETON_JOINT
-  jointPrefab: {fileID: -927199367670048503, guid: 6cb0fde99d5747b4abd4f391765d4f29,
-    type: 3}
+  jointPrefab: {fileID: 100000, guid: 6cb0fde99d5747b4abd4f391765d4f29, type: 3}
 --- !u!4 &2111231713
 Transform:
   m_ObjectHideFlags: 0
