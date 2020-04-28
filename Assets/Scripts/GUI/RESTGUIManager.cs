@@ -15,10 +15,6 @@ public class AvatarDefinition
 }
 
 public class RESTGUIManager : MonoBehaviour {
-    public string protocol;
-    public int port;
-    public string url;
-    public bool usePortWorkAround;
     public MotionDatabaseInterface motionDatabase;
     public List<AvatarDefinition> avatars;
     public bool userInteraction;
@@ -46,9 +42,6 @@ public class RESTGUIManager : MonoBehaviour {
     {
         modelIndex = 0;
         userInteraction = false;
-        motionDatabase.SetPort(port);
-        motionDatabase.SetURL(url);
-        motionDatabase.SetPortWorkAround(usePortWorkAround);
         initialized = false;
         centerCamera = false;
         useMesh = false;
@@ -183,19 +176,6 @@ public class RESTGUIManager : MonoBehaviour {
         modelDropdown.AddOptions(options);
     }
 
-    public bool HasAvatar(string name)
-    {
-        bool success = false;
-        foreach (var a in avatars)
-        {
-            if (a.name == name)
-            {
-                success = true;
-                break;
-            }
-        }
-        return success;
-    }
 
     public void ToggleMesh()
     {
@@ -256,14 +236,12 @@ public class RESTGUIManager : MonoBehaviour {
 
     public void SetPort(int newPort)
     {
-        port = newPort;
         motionDatabase.SetPort(newPort);
     }
 
     public void TogglePortWorkaround()
     {
-         usePortWorkAround = !usePortWorkAround;
-         motionDatabase.SetPortWorkAround(usePortWorkAround);
+         motionDatabase.TogglePortWorkaround();
     }
 
     public void EnableCamera(){
@@ -300,13 +278,11 @@ public class RESTGUIManager : MonoBehaviour {
 
     void SetURL(string newURL){
 
-        url = newURL;
         motionDatabase.SetURL(newURL);
     }
     
     public void SetProtocol(string newProtocol){
-        protocol = newProtocol;
-        motionDatabase.SetProtocol(protocol);
+        motionDatabase.SetProtocol(newProtocol);
     }
     
     void LoadScene(string clipID)
