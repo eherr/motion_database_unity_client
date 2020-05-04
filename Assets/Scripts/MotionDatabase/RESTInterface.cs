@@ -86,6 +86,7 @@ namespace MotionDatabaseInterface
             }
         }
 
+        
 
         /// <summary>
         /// Asynchronous HTTP Post request.
@@ -109,12 +110,47 @@ namespace MotionDatabaseInterface
             {
                 print("Error: " + webRequest.error);
             }
+            else if(webRequest.downloadHandler.text == "Error")
+            {
+                print("Error to get file. ");
+            } 
             else
             {
                 callback(webRequest.downloadHandler.data);
             }
 
         }
+        
+        /// <summary>
+        /// Asynchronous HTTP Post request.
+        /// src: http://stackoverflow.com/questions/27310201/async-requests-in-unity
+        /// https://docs.unity3d.com/Manual/UnityWebRequest-CreatingDownloadHandlers.html
+        /// </summary>
+        /// <param name="method">REST method name.</param>
+        /// <param name="messageBody">POST message body string.</param>
+        /// <param name="callback">Callback handler that process the response string. </param>
+        /// <returns></returns>
+        protected IEnumerator sendRequestCoroutineString(string method, string messageBody, System.Action<string> callback)
+        {
+            var data = System.Text.Encoding.UTF8.GetBytes(messageBody);
+            string urlString = getMethodURL(method);
+            UnityWebRequest webRequest = UnityWebRequest.Post(urlString, UnityWebRequest.kHttpVerbPOST);
+            webRequest.uploadHandler = new UploadHandlerRaw(data);
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+            // Request and wait for the desired page.
+            yield return webRequest.SendWebRequest();
+            if (webRequest.isNetworkError)
+            {
+                print("Error: " + webRequest.error);
+            }
+            else
+            {
+                string result = System.Text.Encoding.UTF8.GetString(webRequest.downloadHandler.data);
+                callback(result);
+            }
+
+        }
+
 
         /// <summary>
         /// Asynchronous HTTP GET request.

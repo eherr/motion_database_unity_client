@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using MotionDatabaseInterface;
 using UnityEngine.SceneManagement;
 using Siccity.GLTFUtility;
+using B83.Win32;
+using System.Linq;
 
 [System.Serializable]
 public class AvatarDefinition
@@ -13,7 +15,11 @@ public class AvatarDefinition
     public string skeletonType;
     
 }
-
+public class DropInfo
+{
+    public string file;
+    public Vector2 pos;
+}
 public class RESTGUIManager : MonoBehaviour {
     public string protocol;
     public int port;
@@ -37,9 +43,13 @@ public class RESTGUIManager : MonoBehaviour {
     bool centerCamera = false;
     public bool useMesh = false;
     public int modelIndex;
-    
-    List<GameObject> generatedObjects = new List<GameObject>();
 
+    public string upload_file_path;
+    List<GameObject> generatedObjects = new List<GameObject>();
+    
+    List<string> log = new List<string>();
+    DropInfo dropInfo = null;
+    GameObject result = null;
 
     // Use this for initialization
     void Start()
@@ -53,7 +63,6 @@ public class RESTGUIManager : MonoBehaviour {
         centerCamera = false;
         useMesh = false;
 
-
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
 #if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput = false;
@@ -62,12 +71,89 @@ public class RESTGUIManager : MonoBehaviour {
 #if UNITY_EDITOR
 
         GetSkeleton();
-        animationPlayer.GetAvatarList(handleAvatarList);
+        if (sourceSkeletonModel == "")
+            sourceSkeletonModel = "mh_cmu";
+        animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
+     
+        if (upload_file_path != "")
+        {
+            animationPlayer.UploadAvatarToServer(upload_file_path);
+        }
         
 #endif
-
-
     }
+    
+    
+    void OnEnable()
+    {
+        // must be installed on the main thread to get the right thread id.
+        UnityDragAndDropHook.InstallHook();
+        UnityDragAndDropHook.OnDroppedFiles += OnFiles;
+    }
+    void OnDisable()
+    {
+        UnityDragAndDropHook.UninstallHook();
+    }
+    void OnFiles(List<string> aFiles, POINT aPos)
+    {
+        // do something with the dropped file names. aPos will contain the 
+        // mouse position within the window where the files has been dropped.
+        upload_file_path = aFiles.Aggregate((a, b) => a + "\n\t" + b);
+        Debug.Log(upload_file_path);
+        log.Add(upload_file_path);
+
+        string file = "";
+        // scan through dropped files and filter out supported image types
+        foreach (var f in aFiles)
+        {
+            var fi = new System.IO.FileInfo(f);
+            var ext = fi.Extension.ToLower();
+            if (ext == ".glb")
+            {
+                file = f;
+                break;
+            }
+            else
+            {
+                log.Add("Not a GLB file");
+
+            }
+        }
+        // If the user dropped a supported file, create a DropInfo
+        if (file != "")
+        {
+            var info = new DropInfo
+            {
+                file = file,
+                pos = new Vector2(aPos.x, aPos.y)
+            };
+            dropInfo = info;
+        }
+    }
+    void LoadModel(DropInfo aInfo)
+    {
+        if (aInfo == null)
+            return;
+        animationPlayer.UploadAvatarToServer(upload_file_path);
+        //ClearingScene();
+        //result = Importer.LoadFromFile(aInfo.file);
+        //generatedObjects.Add(result);
+    }
+    
+    private void OnGUI()
+    {
+        foreach (var s in log)
+            GUILayout.Label(s);
+        DropInfo tmp = null;
+        if (Event.current.type == EventType.Repaint && dropInfo != null)
+        {
+            tmp = dropInfo;
+            dropInfo = null;
+        }
+        LoadModel(tmp);
+        
+    }
+    
     void handleAvatarList(string stringArray)
     {
        
@@ -76,7 +162,7 @@ public class RESTGUIManager : MonoBehaviour {
         for (int i = 1; i < words.Length; i = i + 2)
         {
             string word = words[i];
-            avatars.Add(new AvatarDefinition { name = word, skeletonType = "mh_cmu" });
+            avatars.Add(new AvatarDefinition { name = word, skeletonType = sourceSkeletonModel });
         }
         fillAvatarList();
        
@@ -165,7 +251,7 @@ public class RESTGUIManager : MonoBehaviour {
             modelIndex = newModelIdx;
             GetSkeleton();
             animationPlayer.ClearGeneratedObjects();
-            animationPlayer.LoadAvatar(avatars[modelIndex].name);
+            animationPlayer.LoadAvatar(sourceSkeletonModel, avatars[modelIndex].name);
         }
     }
    

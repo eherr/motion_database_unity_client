@@ -13,13 +13,6 @@
         </e>
         <e p="Scenes" t="Include">
           <e p="Checkerboard.shader" t="Include" />
-          <e p="mh_cmu_example_assets" t="Include">
-            <e p="mh_cmu_example_assets" t="Include">
-              <e p="Scenes" t="Include">
-                <e p="Checkerboard.shader" t="Include" />
-              </e>
-            </e>
-          </e>
         </e>
         <e p="Scripts" t="Include">
           <e p="BufferedBinaryReader.cs" t="Include" />
@@ -85,6 +78,10 @@
             <e p="CallRestAPI.cs" t="Include" />
             <e p="Game.cs" t="Include" />
             <e p="startImport.cs" t="Include" />
+          </e>
+          <e p="UnityWindowsFileDrag-Drop-master" t="Include">
+            <e p="B83.Win32.cs" t="Include" />
+            <e p="FileDragAndDrop.cs" t="Include" />
           </e>
         </e>
         <e p="ThirdParty" t="Include">

@@ -63,7 +63,7 @@ namespace MotionDatabaseInterface
             }
             waitingForSkeleton = true;
             StartCoroutine(LoadAndRequest("get_skeleton", message, handleSkeleton));
-            
+          //StartCoroutine(LoadAndRequest("get_GLB_list", skeletonType, handleSkeleton));
         }
 
 
@@ -89,23 +89,29 @@ namespace MotionDatabaseInterface
             StartCoroutine(LoadAndRequestBytes("get_sample", message, handleMotion));
         }
 
-        public void LoadAvatar(string name)
+        public void LoadAvatar(string skeleton_type, string name)
         {
             print("Get avatar " + name);
-            var message = name;// "{ \"name\": \"" + name + "\"}";
+            var message = skeleton_type + "/" + name;        // "{ \"name\": \"" + name + "\"}";
             StartCoroutine(LoadAndRequestBytes("get_binary", message, handleAvatar));
         }
 
-        public void GetAvatarList(System.Action<string> callback)
+        public void UploadAvatarToServer(string filepath)
+        {
+            print("Upload avatar to server");
+            StartCoroutine(LoadAndRequestBytes("upload_GLB", filepath, handleAvatar));
+        }
+        public void GetAvatarList(string name, System.Action<string> callback)
         {
             print("Get avatar list");
-            StartCoroutine(GetRequest("get_GLB_list", callback));
+          //  StartCoroutine(GetRequest("get_GLB_list", callback));
+            StartCoroutine(LoadAndRequestNames("get_GLB_list", name, callback));
         }
 
         public void GetAnnotation()
         {
 
-            print("Get annoation by id" + clipID);
+            print("Get annotation by id" + clipID);
             var message = "{ \"clip_id\":" + clipID + "}";
             StartCoroutine(LoadAndRequest("download_annotation", message, handleAnnotation));
         }
@@ -155,7 +161,20 @@ namespace MotionDatabaseInterface
             yield return StartCoroutine(sendGETRequestCoroutine(method, callback));
         }
 
+    
+        protected IEnumerator LoadAndRequestNames(string method, string messageBody, System.Action<string> callback)
+        {
+            Debug.Log("POST request!");
+            yield return StartCoroutine(Fade(1f));
+            loadIcon.blocksRaycasts = true;
 
+            yield return StartCoroutine(sendRequestCoroutineString(method, messageBody, callback));
+
+            loadIcon.blocksRaycasts = false;
+            yield return StartCoroutine(Fade(0f));
+        }
+
+        
         protected IEnumerator LoadAndRequest(string method, string messageBody, PostRequestCallback callback)
         {
             Debug.Log("POST request!");
@@ -167,7 +186,7 @@ namespace MotionDatabaseInterface
             loadIcon.blocksRaycasts = false;
             yield return StartCoroutine(Fade(0f));
         }
-
+       
         protected IEnumerator LoadAndRequestBytes(string method, string messageBody, BytePostRequestCallback callback)
         {
             Debug.Log("Loading request!");
