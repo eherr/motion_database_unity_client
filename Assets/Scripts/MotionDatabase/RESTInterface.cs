@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Net;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 namespace MotionDatabaseInterface
 {
@@ -19,7 +20,8 @@ namespace MotionDatabaseInterface
         public string url;
         public bool usePort;
         public bool usePortWorkAround;
-
+        
+        public float downloadDataProgress;
         /// <summary>
         /// Synchronous HTTP Post request.
         /// </summary>
@@ -105,10 +107,22 @@ namespace MotionDatabaseInterface
             webRequest.uploadHandler = new UploadHandlerRaw(data);
             webRequest.downloadHandler = new DownloadHandlerBuffer();
             // Request and wait for the desired page.
-            yield return webRequest.SendWebRequest();
+            var opr = webRequest.SendWebRequest();
+            yield return opr;
+            while (!opr.isDone)
+            {
+                downloadDataProgress = webRequest.downloadProgress * 100;
+               // progressBar.value = downloadDataProgress / 100.0f;
+               
+                yield return null;
+            }
+            print("Download: " + downloadDataProgress);
+           
+
             if (webRequest.isNetworkError)
             {
                 print("Error: " + webRequest.error);
+                
             }
             else if(webRequest.downloadHandler.text == "Error")
             {

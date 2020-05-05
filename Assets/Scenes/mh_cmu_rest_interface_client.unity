@@ -1507,7 +1507,7 @@ PrefabInstance:
     - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: upload_file_path
-      value: 
+      value: /Users\Anindita\DFKI_work\models\mh_cmu_female.glb
       objectReference: {fileID: 0}
     - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}

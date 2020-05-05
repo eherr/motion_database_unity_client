@@ -35,7 +35,7 @@ public class RESTGUIManager : MonoBehaviour {
 
     public Dropdown modelDropdown;
     
-
+    public Slider progressBar;
     public CameraController cameraController;
 
     public string sourceSkeletonModel;
@@ -77,6 +77,7 @@ public class RESTGUIManager : MonoBehaviour {
      
         if (upload_file_path != "")
         {
+            
             animationPlayer.UploadAvatarToServer(upload_file_path);
         }
         
@@ -130,6 +131,7 @@ public class RESTGUIManager : MonoBehaviour {
             dropInfo = info;
         }
     }
+
     void LoadModel(DropInfo aInfo)
     {
         if (aInfo == null)
@@ -153,7 +155,7 @@ public class RESTGUIManager : MonoBehaviour {
         LoadModel(tmp);
         
     }
-    
+ 
     void handleAvatarList(string stringArray)
     {
        

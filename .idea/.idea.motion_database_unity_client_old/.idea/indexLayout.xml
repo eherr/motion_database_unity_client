@@ -23,11 +23,10 @@
       <Path>.git</Path>
       <Path>.idea</Path>
       <Path>.vs</Path>
+      <Path>BUILD</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
-      <Path>MonoBleedingEdge</Path>
       <Path>Temp</Path>
-      <Path>mocap_server_client_Data</Path>
       <Path>obj</Path>
     </explicitExcludes>
   </component>
