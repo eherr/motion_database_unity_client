@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 using MotionDatabaseInterface;
 using UnityEngine.SceneManagement;
@@ -34,8 +35,8 @@ public class RESTGUIManager : MonoBehaviour {
     public GameObject settingsPanel;
 
     public Dropdown modelDropdown;
-    
-    public Slider progressBar;
+
+    //public Slider ProgressBar;
     public CameraController cameraController;
 
     public string sourceSkeletonModel;
@@ -69,16 +70,16 @@ public class RESTGUIManager : MonoBehaviour {
 #endif
 
 #if UNITY_EDITOR
-
+        animationPlayer.ProgressBar.gameObject.SetActive(false);        
         GetSkeleton();
         if (sourceSkeletonModel == "")
             sourceSkeletonModel = "mh_cmu";
         animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
-     
+ 
         if (upload_file_path != "")
         {
-            
             animationPlayer.UploadAvatarToServer(upload_file_path);
+            
         }
         
 #endif

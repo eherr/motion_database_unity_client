@@ -3,8 +3,10 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Net;
+using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+
 
 namespace MotionDatabaseInterface
 {
@@ -20,7 +22,7 @@ namespace MotionDatabaseInterface
         public string url;
         public bool usePort;
         public bool usePortWorkAround;
-        
+        public Slider ProgressBar;
         public float downloadDataProgress;
         /// <summary>
         /// Synchronous HTTP Post request.
@@ -106,19 +108,13 @@ namespace MotionDatabaseInterface
             UnityWebRequest webRequest = UnityWebRequest.Post(urlString, UnityWebRequest.kHttpVerbPOST);
             webRequest.uploadHandler = new UploadHandlerRaw(data);
             webRequest.downloadHandler = new DownloadHandlerBuffer();
-            // Request and wait for the desired page.
-            var opr = webRequest.SendWebRequest();
-            yield return opr;
-            while (!opr.isDone)
-            {
-                downloadDataProgress = webRequest.downloadProgress * 100;
-               // progressBar.value = downloadDataProgress / 100.0f;
-               
-                yield return null;
-            }
-            print("Download: " + downloadDataProgress);
-           
+            
+            // Request and wait for the desired page. Don't yield.
+            webRequest.SendWebRequest();
 
+            //Yield/wait in the ShowDownloadProgress until ShowDownloadProgress returns 
+            yield return StartCoroutine(ShowProgress(webRequest));
+            
             if (webRequest.isNetworkError)
             {
                 print("Error: " + webRequest.error);
@@ -133,6 +129,27 @@ namespace MotionDatabaseInterface
                 callback(webRequest.downloadHandler.data);
             }
 
+        }
+        
+        /// <summary>
+        /// Shows the download/upload progress.  
+        /// </summary>
+        /// <param name="www"> unity web request</param>
+        /// <returns></returns>
+        public IEnumerator ShowProgress(UnityWebRequest www) {
+           
+            ProgressBar.gameObject.SetActive(true);
+            while (!www.isDone)
+            {
+                downloadDataProgress = www.downloadProgress;
+                ProgressBar.value = downloadDataProgress;
+                print(string.Format("Downloaded {0:P1}", downloadDataProgress));
+                // To get the progress every frame 
+                yield return null;
+            }
+            ProgressBar.value = 1;
+            ProgressBar.gameObject.SetActive(false);
+            print("Done");
         }
         
         /// <summary>
