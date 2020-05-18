@@ -14,14 +14,21 @@ public class AvatarDefinition
 {
     public string name;
     public string skeletonType;
-    
 }
+
+public class FileUpload
+{
+    public  string upload_file_path { get; set; }
+}
+
 public class DropInfo
 {
     public string file;
     public Vector2 pos;
 }
-public class RESTGUIManager : MonoBehaviour {
+
+public class RESTGUIManager : MonoBehaviour
+{
     public string protocol;
     public int port;
     public string url;
@@ -33,24 +40,21 @@ public class RESTGUIManager : MonoBehaviour {
     public Text frameCountText;
     public GameObject modelPanel;
     public GameObject settingsPanel;
-
+    public Button uploadModel;
     public Dropdown modelDropdown;
-
-    //public Slider ProgressBar;
     public CameraController cameraController;
-
     public string sourceSkeletonModel;
     public bool initialized;
     bool centerCamera = false;
     public bool useMesh = false;
     public int modelIndex;
-
-    public string upload_file_path;
-    List<GameObject> generatedObjects = new List<GameObject>();
+    public InputField file_path;
+    FileUpload newfile = new FileUpload();
     
+    
+    static string f_path, u_path;
     List<string> log = new List<string>();
     DropInfo dropInfo = null;
-    GameObject result = null;
 
     // Use this for initialization
     void Start()
@@ -64,27 +68,43 @@ public class RESTGUIManager : MonoBehaviour {
         centerCamera = false;
         useMesh = false;
 
+        animationPlayer.ProgressBar.gameObject.SetActive(false);
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
 #if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput = false;
 #endif
 
-#if UNITY_EDITOR
-        animationPlayer.ProgressBar.gameObject.SetActive(false);        
         GetSkeleton();
         if (sourceSkeletonModel == "")
             sourceSkeletonModel = "mh_cmu";
         animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
- 
-        if (upload_file_path != "")
-        {
-            animationPlayer.UploadAvatarToServer(upload_file_path);
-            
-        }
-        
+#if UNITY_EDITOR
+        //  animationPlayer.UploadAvatarToServer("C:\\Users\\Anindita\\DFKI_work\\models\\model8_cmu.glb");
+        //file_path.text = "C:\\Users\\Anindita\\DFKI_work\\models\\model8_cmu.glb";
 #endif
     }
-    
+    void OnButtonClicked()
+    {
+        string disp = "print: " + u_path;
+        print(disp);
+        if (u_path == "" || u_path == null)
+        {
+            print("Field is empty ....");
+        }
+        else
+        {
+            GetSkeleton();
+            animationPlayer.ClearGeneratedObjects();
+            animationPlayer.UploadAvatarToServer(u_path);
+        }
+    }
+    void OnTextChanged()
+    {
+        
+        u_path = file_path.text;
+       // print(u_path);
+    }
+   
     
     void OnEnable()
     {
@@ -92,17 +112,19 @@ public class RESTGUIManager : MonoBehaviour {
         UnityDragAndDropHook.InstallHook();
         UnityDragAndDropHook.OnDroppedFiles += OnFiles;
     }
+
     void OnDisable()
     {
         UnityDragAndDropHook.UninstallHook();
     }
+
     void OnFiles(List<string> aFiles, POINT aPos)
     {
         // do something with the dropped file names. aPos will contain the 
         // mouse position within the window where the files has been dropped.
-        upload_file_path = aFiles.Aggregate((a, b) => a + "\n\t" + b);
-        Debug.Log(upload_file_path);
-        log.Add(upload_file_path);
+        f_path = aFiles.Aggregate((a, b) => a + "\n\t" + b);
+        Debug.Log(f_path);
+        log.Add(f_path);
 
         string file = "";
         // scan through dropped files and filter out supported image types
@@ -118,9 +140,9 @@ public class RESTGUIManager : MonoBehaviour {
             else
             {
                 log.Add("Not a GLB file");
-
             }
         }
+
         // If the user dropped a supported file, create a DropInfo
         if (file != "")
         {
@@ -137,12 +159,14 @@ public class RESTGUIManager : MonoBehaviour {
     {
         if (aInfo == null)
             return;
-        animationPlayer.UploadAvatarToServer(upload_file_path);
+        GetSkeleton();
+        animationPlayer.ClearGeneratedObjects();
+        animationPlayer.UploadAvatarToServer(f_path);
         //ClearingScene();
         //result = Importer.LoadFromFile(aInfo.file);
         //generatedObjects.Add(result);
     }
-    
+
     private void OnGUI()
     {
         foreach (var s in log)
@@ -153,22 +177,21 @@ public class RESTGUIManager : MonoBehaviour {
             tmp = dropInfo;
             dropInfo = null;
         }
+
         LoadModel(tmp);
-        
     }
- 
-    void handleAvatarList(string stringArray)
+
+   void handleAvatarList(string stringArray)
     {
-       
         string[] words = stringArray.Split('"');
 
         for (int i = 1; i < words.Length; i = i + 2)
         {
             string word = words[i];
-            avatars.Add(new AvatarDefinition { name = word, skeletonType = sourceSkeletonModel });
+            avatars.Add(new AvatarDefinition {name = word, skeletonType = sourceSkeletonModel});
         }
+
         fillAvatarList();
-       
     }
 
     // Update is called once per frame
@@ -178,7 +201,7 @@ public class RESTGUIManager : MonoBehaviour {
         var slider = GetComponentInChildren<Slider>();
         if (userInteraction)
         {
-            animationPlayer.avatar.SetCurrentFrame((int)slider.value);
+            animationPlayer.avatar.SetCurrentFrame((int) slider.value);
             int currentFrame = animationPlayer.avatar.frameIdx;
             int nFrames = animationPlayer.avatar.GetNumFrames();
             frameCountText.text = "Frame: " + currentFrame.ToString() + "/" + nFrames.ToString();
@@ -199,7 +222,6 @@ public class RESTGUIManager : MonoBehaviour {
     public void OnBeginSliderDrag()
     {
         userInteraction = true;
-
     }
 
     public void OnEndSliderDrag()
@@ -207,17 +229,21 @@ public class RESTGUIManager : MonoBehaviour {
         userInteraction = false;
     }
 
-    public bool IsPlaying(){
-        if (animationPlayer.avatar != null){
+    public bool IsPlaying()
+    {
+        if (animationPlayer.avatar != null)
+        {
             return false;
-        }else{
+        }
+        else
+        {
             return animationPlayer.avatar.playAnimation;
         }
     }
 
     public void ToggleAnimation()
     {
-         animationPlayer.ToggleAnimation();
+        animationPlayer.ToggleAnimation();
     }
 
     public void ToggleModelPanel()
@@ -226,6 +252,7 @@ public class RESTGUIManager : MonoBehaviour {
         {
             settingsPanel.SetActive(false);
         }
+
         modelPanel.SetActive(!modelPanel.activeInHierarchy);
     }
 
@@ -235,6 +262,7 @@ public class RESTGUIManager : MonoBehaviour {
         {
             modelPanel.SetActive(false);
         }
+
         settingsPanel.SetActive(!settingsPanel.activeInHierarchy);
     }
 
@@ -243,9 +271,11 @@ public class RESTGUIManager : MonoBehaviour {
         animationPlayer.GetMotion();
     }
 
-    public void OnChangeModel(){
+    public void OnChangeModel()
+    {
         loadAvatar();
     }
+
     public void loadAvatar()
     {
         int newModelIdx = modelDropdown.value;
@@ -257,7 +287,7 @@ public class RESTGUIManager : MonoBehaviour {
             animationPlayer.LoadAvatar(sourceSkeletonModel, avatars[modelIndex].name);
         }
     }
-   
+
     public void fillAvatarList()
     {
         modelDropdown.ClearOptions();
@@ -269,6 +299,7 @@ public class RESTGUIManager : MonoBehaviour {
             o.text = a.name;
             options.Add(o);
         }
+
         modelDropdown.AddOptions(options);
     }
 
@@ -283,6 +314,7 @@ public class RESTGUIManager : MonoBehaviour {
                 break;
             }
         }
+
         return success;
     }
 
@@ -290,24 +322,30 @@ public class RESTGUIManager : MonoBehaviour {
     {
         if (animationPlayer.waitingForSkeleton)
         {
-            Debug.Log("waiting" );
+            Debug.Log("waiting");
             animationPlayer.meshToggle.SetIsOnWithoutNotify(useMesh);
             return;
         }
+
         if (avatars.Count > 0)
         {
             useMesh = !useMesh;
-        }else { 
+        }
+        else
+        {
             useMesh = false;
         }
+
         animationPlayer.meshToggle.SetIsOnWithoutNotify(useMesh);
-        Debug.Log("use mesh"+ useMesh.ToString());
-        if (!useMesh) { 
+        Debug.Log("use mesh" + useMesh.ToString());
+        if (!useMesh)
+        {
             animationPlayer.ToggleAnimation();
             animationPlayer.avatar.SetAvatarMesh(null, null);
             animationPlayer.ClearGeneratedObjects();
             GetSkeleton();
-        }else
+        }
+        else
         {
             loadAvatar();
         }
@@ -315,15 +353,15 @@ public class RESTGUIManager : MonoBehaviour {
 
 
     public void GetSkeleton()
-    { 
-
+    {
         animationPlayer.GetSkeleton(sourceSkeletonModel);
-    
     }
 
-    public void SetSourceSkeleton(string name){
-        Debug.Log("Set source skeleton "+name);
-        if (name != sourceSkeletonModel || !initialized){
+    public void SetSourceSkeleton(string name)
+    {
+        Debug.Log("Set source skeleton " + name);
+        if (name != sourceSkeletonModel || !initialized)
+        {
             sourceSkeletonModel = name;
             Debug.Log("update skeleton from server");
             GetSkeleton();
@@ -332,9 +370,9 @@ public class RESTGUIManager : MonoBehaviour {
     }
 
 
-   public void GetMotionByID(string clipID)
+    public void GetMotionByID(string clipID)
     {
-       animationPlayer.GetMotionByID(clipID);
+        animationPlayer.GetMotionByID(clipID);
     }
 
 
@@ -351,56 +389,55 @@ public class RESTGUIManager : MonoBehaviour {
 
     public void TogglePortWorkaround()
     {
-         usePortWorkAround = !usePortWorkAround;
-         animationPlayer.SetPortWorkAround(usePortWorkAround);
+        usePortWorkAround = !usePortWorkAround;
+        animationPlayer.SetPortWorkAround(usePortWorkAround);
     }
 
-    public void EnableCamera(){
+    public void EnableCamera()
+    {
         if (cameraController != null) cameraController.gameObject.SetActive(true);
         Debug.Log("Enable Camera");
     }
 
 
-    public void DisableCamera(){
+    public void DisableCamera()
+    {
         if (cameraController != null) cameraController.gameObject.SetActive(false);
         Debug.Log("Disable Camera");
-        
     }
 
     public void ToggleCenterCamera()
     {
         var root = animationPlayer.avatar.root;
-        centerCamera = !centerCamera &&  root!= null;
+        centerCamera = !centerCamera && root != null;
         if (centerCamera)
         {
             var cameraTarget = root.transform;
-            
+
             Debug.Log("set target");
             cameraController.cameraTarget = cameraTarget;
         }
         else
         {
-
             cameraController.cameraTarget = null;
             Debug.Log("remove target");
         }
-
     }
 
-    void SetURL(string newURL){
-
+    void SetURL(string newURL)
+    {
         url = newURL;
         animationPlayer.SetURL(newURL);
     }
-    
-    public void SetProtocol(string newProtocol){
+
+    public void SetProtocol(string newProtocol)
+    {
         protocol = newProtocol;
         animationPlayer.SetProtocol(protocol);
     }
-    
+
     void LoadScene(string clipID)
     {
-       SceneManager.LoadScene("websocket_client");
+        SceneManager.LoadScene("websocket_client");
     }
-    
 }

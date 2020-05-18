@@ -16,7 +16,7 @@ public class Game : MonoBehaviour
 	public string method2 = "get_binary";
    
 	public Dropdown drop1;
-	
+	public InputField inp;
 
 	GameObject abc = null;
 	List<GameObject> generatedObjects = new List<GameObject>();
@@ -47,6 +47,10 @@ public class Game : MonoBehaviour
 		
 	}
 
+	public void OnButtonClicked()
+	{
+		print(inp.text);
+	}
 	public void Dropdown_IndexChanges(int index)
 	{
 		ClearingScene();
