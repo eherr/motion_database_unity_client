@@ -40,7 +40,6 @@ public class RESTGUIManager : MonoBehaviour
     public Text frameCountText;
     public GameObject modelPanel;
     public GameObject settingsPanel;
-    public Button uploadModel;
     public Dropdown modelDropdown;
     public CameraController cameraController;
     public string sourceSkeletonModel;
@@ -83,29 +82,10 @@ public class RESTGUIManager : MonoBehaviour
         //file_path.text = "C:\\Users\\Anindita\\DFKI_work\\models\\model8_cmu.glb";
 #endif
     }
-    void OnButtonClicked()
-    {
-        string disp = "print: " + u_path;
-        print(disp);
-        if (u_path == "" || u_path == null)
-        {
-            print("Field is empty ....");
-        }
-        else
-        {
-            GetSkeleton();
-            animationPlayer.ClearGeneratedObjects();
-            animationPlayer.UploadAvatarToServer(u_path);
-        }
-    }
-    void OnTextChanged()
-    {
-        
-        u_path = file_path.text;
-       // print(u_path);
-    }
-   
     
+    
+
+
     void OnEnable()
     {
         // must be installed on the main thread to get the right thread id.
@@ -271,6 +251,28 @@ public class RESTGUIManager : MonoBehaviour
         animationPlayer.GetMotion();
     }
 
+    public void OnTextChanged()
+    {
+        u_path = file_path.text;
+        print(u_path);
+    }
+    public void ButtonIsClicked()
+    {
+        u_path = file_path.text;
+        if (u_path == "" || u_path == null)
+        {
+            print("Field is empty ....");
+        }
+        else
+        {
+            print(u_path);
+           
+            GetSkeleton();
+            animationPlayer.ClearGeneratedObjects();
+            animationPlayer.UploadAvatarToServer(u_path);
+            
+        }
+    }
     public void OnChangeModel()
     {
         loadAvatar();
