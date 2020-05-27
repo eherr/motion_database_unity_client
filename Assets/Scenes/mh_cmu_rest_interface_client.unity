@@ -1529,6 +1529,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94cda9af415ee954982ea9863c1fd871, type: 3}
+--- !u!1 &1290808133 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 546526920518606066, guid: f5ea428d4512b924099dac74e9aa8b23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1504947834}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1295784684 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
@@ -1907,6 +1913,16 @@ PrefabInstance:
       propertyPath: display
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: DeletionPanel
+      value: 
+      objectReference: {fileID: 1290808133}
+    - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: modelDeleteDropdown
+      value: 
+      objectReference: {fileID: 1580145755}
     - target: {fileID: 114707256687473138, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2317,6 +2333,16 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -35
       objectReference: {fileID: 0}
+    - target: {fileID: 3431260327785853527, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_Name
+      value: DeletionDropdown
+      objectReference: {fileID: 0}
+    - target: {fileID: 3575386542686023300, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: DeleteButtonClicked
+      objectReference: {fileID: 0}
     - target: {fileID: 4732860939287273605, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2326,6 +2352,41 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.x
       value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256738090715611594, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711778932063582260, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711778932063582260, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711778932063582260, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711778932063582260, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1295784684}
+    - target: {fileID: 7711778932063582260, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnDeletionModelSelect
+      objectReference: {fileID: 0}
+    - target: {fileID: 7711778932063582260, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8726489981276928868, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
@@ -2441,6 +2502,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1580145755 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7711778932063582260, guid: f5ea428d4512b924099dac74e9aa8b23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1504947834}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0b652f32a2cc243917e4028fa0f046, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1606856207
 GameObject:
   m_ObjectHideFlags: 0

@@ -108,6 +108,12 @@ namespace MotionDatabaseInterface
             StartCoroutine(LoadAndRequestNames("get_GLB_list", name, callback));
         }
 
+        public void DeleteAvatarList(string name, System.Action<string> callback)
+        {
+            print("Delete avatar from list");
+            StartCoroutine(LoadAndRequestNames("delete_GLB", name, callback));
+        }
+        
         public void GetAnnotation()
         {
 

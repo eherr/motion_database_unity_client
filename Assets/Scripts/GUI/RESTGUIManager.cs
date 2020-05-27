@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -49,12 +50,13 @@ public class RESTGUIManager : MonoBehaviour
     public int modelIndex;
     public InputField file_path;
     FileUpload newfile = new FileUpload();
-    
-    
+    public GameObject DeletionPanel;
+    public Dropdown modelDeleteDropdown;
     static string f_path, u_path;
     List<string> log = new List<string>();
     DropInfo dropInfo = null;
 
+    private bool setActive = false;
     // Use this for initialization
     void Start()
     {
@@ -68,6 +70,7 @@ public class RESTGUIManager : MonoBehaviour
         useMesh = false;
 
         animationPlayer.ProgressBar.gameObject.SetActive(false);
+        DeletionPanel.SetActive(false);
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
 #if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput = false;
@@ -82,10 +85,27 @@ public class RESTGUIManager : MonoBehaviour
         //file_path.text = "C:\\Users\\Anindita\\DFKI_work\\models\\model8_cmu.glb";
 #endif
     }
+
+    public void DeleteButtonClicked()
+    {
+        setActive = !setActive;
+        DeletionPanel.SetActive(setActive);
     
+    }
     
 
-
+    public void OnDeletionModelSelect()
+    {
+        string modelName = modelDeleteDropdown.options[modelDeleteDropdown.value].text;
+        print(modelName);
+        
+        animationPlayer.DeleteAvatarList(modelName, s => { });
+        modelDeleteDropdown.options.RemoveAt(modelDeleteDropdown.value);
+        modelDropdown.options.RemoveAt(modelDeleteDropdown.value);
+        avatars.RemoveAt(modelDeleteDropdown.value);
+        DeletionPanel.SetActive(false);
+        setActive = false;
+    }
     void OnEnable()
     {
         // must be installed on the main thread to get the right thread id.
@@ -139,12 +159,13 @@ public class RESTGUIManager : MonoBehaviour
     {
         if (aInfo == null)
             return;
+        
         GetSkeleton();
         animationPlayer.ClearGeneratedObjects();
-        animationPlayer.UploadAvatarToServer(f_path);
-        //ClearingScene();
-        //result = Importer.LoadFromFile(aInfo.file);
-        //generatedObjects.Add(result);
+        animationPlayer.UploadAvatarToServer(u_path);
+       modelDropdown.ClearOptions();
+        avatars.Clear();
+        animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
     }
 
     private void OnGUI()
@@ -163,6 +184,7 @@ public class RESTGUIManager : MonoBehaviour
 
    void handleAvatarList(string stringArray)
     {
+        
         string[] words = stringArray.Split('"');
 
         for (int i = 1; i < words.Length; i = i + 2)
@@ -259,7 +281,7 @@ public class RESTGUIManager : MonoBehaviour
     public void ButtonIsClicked()
     {
         u_path = file_path.text;
-        if (u_path == "" || u_path == null)
+        if (String.IsNullOrEmpty(u_path))
         {
             print("Field is empty ....");
         }
@@ -270,7 +292,9 @@ public class RESTGUIManager : MonoBehaviour
             GetSkeleton();
             animationPlayer.ClearGeneratedObjects();
             animationPlayer.UploadAvatarToServer(u_path);
-            
+            modelDropdown.ClearOptions();
+            avatars.Clear();
+            animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
         }
     }
     public void OnChangeModel()
@@ -293,6 +317,7 @@ public class RESTGUIManager : MonoBehaviour
     public void fillAvatarList()
     {
         modelDropdown.ClearOptions();
+        modelDeleteDropdown.ClearOptions();
         var options = new List<Dropdown.OptionData>();
 
         foreach (var a in avatars)
@@ -303,6 +328,7 @@ public class RESTGUIManager : MonoBehaviour
         }
 
         modelDropdown.AddOptions(options);
+        modelDeleteDropdown.AddOptions(options);
     }
 
     public bool HasAvatar(string name)
