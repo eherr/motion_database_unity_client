@@ -50,8 +50,12 @@ public class RESTGUIManager : MonoBehaviour
     public int modelIndex;
     public InputField file_path;
     FileUpload newfile = new FileUpload();
-    public GameObject DeletionPanel;
-    public Dropdown modelDeleteDropdown;
+    public Button okay;
+    public Button cancel;
+    public Text dialogBox;
+    public Button okayDialog;
+    public Button deleteDialog;
+    public Button cancelDialog;
     static string f_path, u_path;
     List<string> log = new List<string>();
     DropInfo dropInfo = null;
@@ -70,7 +74,8 @@ public class RESTGUIManager : MonoBehaviour
         useMesh = false;
 
         animationPlayer.ProgressBar.gameObject.SetActive(false);
-        DeletionPanel.SetActive(false);
+        CancelButtonIsClicked();
+        CancelDialogButtonIsClicked();
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
 #if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput = false;
@@ -86,26 +91,8 @@ public class RESTGUIManager : MonoBehaviour
 #endif
     }
 
-    public void DeleteButtonClicked()
-    {
-        setActive = !setActive;
-        DeletionPanel.SetActive(setActive);
     
-    }
-    
-
-    public void OnDeletionModelSelect()
-    {
-        string modelName = modelDeleteDropdown.options[modelDeleteDropdown.value].text;
-        print(modelName);
-        
-        animationPlayer.DeleteAvatarList(modelName, s => { });
-        modelDeleteDropdown.options.RemoveAt(modelDeleteDropdown.value);
-        modelDropdown.options.RemoveAt(modelDeleteDropdown.value);
-        avatars.RemoveAt(modelDeleteDropdown.value);
-        DeletionPanel.SetActive(false);
-        setActive = false;
-    }
+   
     void OnEnable()
     {
         // must be installed on the main thread to get the right thread id.
@@ -155,7 +142,7 @@ public class RESTGUIManager : MonoBehaviour
         }
     }
     
-    void LoadModelforWEBGL(string info)
+    public void LoadModelforWEBGL(string info)
     {
         print("inside function LoadModelforWebGL");
         print(info);
@@ -297,9 +284,70 @@ public class RESTGUIManager : MonoBehaviour
         u_path = file_path.text;
         print(u_path);
     }
-    public void ButtonIsClicked()
+    
+    public void DeleteButtonClicked()
+    {
+        string modelName = modelDropdown.options[modelDropdown.value].text;
+        print(modelName);
+        
+        animationPlayer.DeleteAvatarList(modelName, s => { });
+        modelDropdown.options.RemoveAt(modelDropdown.value);
+        avatars.RemoveAt(modelDropdown.value);
+        //GetSkeleton();
+        animationPlayer.ClearGeneratedObjects();
+        //modelDropdown.ClearOptions();
+       // avatars.Clear();
+        //animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
+        
+        CancelDialogButtonIsClicked();
+    }
+
+    public void MinusButtonIsClicked()
+    {
+        deleteDialog.gameObject.SetActive(true);
+        dialogBox.text = "Are you sure?";
+        cancelDialog.gameObject.SetActive(true);
+    }
+    public void PlusButtonIsClicked()
+    {
+        setActive = !setActive;
+        okay.gameObject.SetActive(true);
+        file_path.gameObject.SetActive(true);
+        cancel.gameObject.SetActive(true);
+    }
+    public void CancelDialogButtonIsClicked()
+    {
+        file_path.text = "";
+        okayDialog.gameObject.SetActive(false);
+        deleteDialog.gameObject.SetActive(false);
+        dialogBox.text = "";
+        cancelDialog.gameObject.SetActive(false);
+    }
+    
+    public void OkayButtonIsClicked()
     {
         u_path = file_path.text;
+        if (String.IsNullOrEmpty(u_path))
+        {
+            print("Field is empty ....");
+        }
+        else
+        {
+            CancelButtonIsClicked();
+            okayDialog.gameObject.SetActive(true);
+            dialogBox.text = "Are you sure?";
+            cancelDialog.gameObject.SetActive(true);
+        }
+    }
+    
+    public void CancelButtonIsClicked()
+    {
+        okay.gameObject.SetActive(false);
+        file_path.gameObject.SetActive(false);
+        cancel.gameObject.SetActive(false);
+    }
+    public void OkayDialogButtonIsClicked()
+    {
         if (String.IsNullOrEmpty(u_path))
         {
             print("Field is empty ....");
@@ -315,6 +363,7 @@ public class RESTGUIManager : MonoBehaviour
             avatars.Clear();
             animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
         }
+        CancelDialogButtonIsClicked();
     }
     public void OnChangeModel()
     {
@@ -336,7 +385,6 @@ public class RESTGUIManager : MonoBehaviour
     public void fillAvatarList()
     {
         modelDropdown.ClearOptions();
-        modelDeleteDropdown.ClearOptions();
         var options = new List<Dropdown.OptionData>();
 
         foreach (var a in avatars)
@@ -347,7 +395,6 @@ public class RESTGUIManager : MonoBehaviour
         }
 
         modelDropdown.AddOptions(options);
-        modelDeleteDropdown.AddOptions(options);
     }
 
     public bool HasAvatar(string name)
