@@ -154,7 +154,26 @@ public class RESTGUIManager : MonoBehaviour
             dropInfo = info;
         }
     }
+    
+    void LoadModelforWEBGL(string info)
+    {
+        print("inside function LoadModelforWebGL");
+        print(info);
+        if (info == null)
+            return;
+        var fi = new System.IO.FileInfo(info);
+        var ext = fi.Extension.ToLower();
+        if (ext != ".glb")
+            return;
+        GetSkeleton();
+        animationPlayer.ClearGeneratedObjects();
+        animationPlayer.UploadAvatarToServer(u_path);
+        modelDropdown.ClearOptions();
+        avatars.Clear();
+        animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
 
+    }
+    
     void LoadModel(DropInfo aInfo)
     {
         if (aInfo == null)
