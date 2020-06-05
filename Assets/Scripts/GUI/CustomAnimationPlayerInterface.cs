@@ -88,6 +88,11 @@ namespace MotionDatabaseInterface
             var message = "{ \"model_id\": \"" + modelID + "\"}";
             StartCoroutine(LoadAndRequestBytes("get_sample", message, handleMotion));
         }
+        public void GetSkeletonList( System.Action<string> callback)
+        {
+            print("Get skeleton list");
+            StartCoroutine(GetRequest("get_skeleton_list",  callback));
+        }
 
         public void LoadAvatar(string skeleton_type, string name)
         {

@@ -17,10 +17,6 @@ public class AvatarDefinition
     public string skeletonType;
 }
 
-public class FileUpload
-{
-    public  string upload_file_path { get; set; }
-}
 
 public class DropInfo
 {
@@ -42,6 +38,7 @@ public class RESTGUIManager : MonoBehaviour
     public GameObject modelPanel;
     public GameObject settingsPanel;
     public Dropdown modelDropdown;
+    public Dropdown skeletonDropdown;
     public CameraController cameraController;
     public string sourceSkeletonModel;
     public bool initialized;
@@ -49,7 +46,8 @@ public class RESTGUIManager : MonoBehaviour
     public bool useMesh = false;
     public int modelIndex;
     public InputField file_path;
-    FileUpload newfile = new FileUpload();
+    public InputField rename_file;
+   
     public Button okay;
     public Button cancel;
     public Text dialogBox;
@@ -76,6 +74,7 @@ public class RESTGUIManager : MonoBehaviour
         animationPlayer.ProgressBar.gameObject.SetActive(false);
         CancelButtonIsClicked();
         CancelDialogButtonIsClicked();
+        rename_file.text = "default";
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
 #if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput = false;
@@ -85,6 +84,7 @@ public class RESTGUIManager : MonoBehaviour
         if (sourceSkeletonModel == "")
             sourceSkeletonModel = "mh_cmu";
         animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
+        animationPlayer.GetSkeletonList( handleSkeletonList);
 #if UNITY_EDITOR
         //  animationPlayer.UploadAvatarToServer("C:\\Users\\Anindita\\DFKI_work\\models\\model8_cmu.glb");
         //file_path.text = "C:\\Users\\Anindita\\DFKI_work\\models\\model8_cmu.glb";
@@ -110,6 +110,7 @@ public class RESTGUIManager : MonoBehaviour
         // do something with the dropped file names. aPos will contain the 
         // mouse position within the window where the files has been dropped.
         f_path = aFiles.Aggregate((a, b) => a + "\n\t" + b);
+        file_path.text = f_path;
         Debug.Log(f_path);
         log.Add(f_path);
 
@@ -165,13 +166,18 @@ public class RESTGUIManager : MonoBehaviour
     {
         if (aInfo == null)
             return;
-        
+        print("Drop info: ");
+        print(dropInfo.file);
+        PlusButtonIsClicked();
+        to_upload();
+        /*
         GetSkeleton();
         animationPlayer.ClearGeneratedObjects();
         animationPlayer.UploadAvatarToServer(u_path);
        modelDropdown.ClearOptions();
         avatars.Clear();
         animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
+        */
     }
 
     private void OnGUI()
@@ -188,6 +194,21 @@ public class RESTGUIManager : MonoBehaviour
         LoadModel(tmp);
     }
 
+    void handleSkeletonList(string stringArray)
+    {
+        string[] words = stringArray.Split('"');
+        skeletonDropdown.ClearOptions();
+        var options = new List<Dropdown.OptionData>();
+        for (int i = 1; i < words.Length; i = i + 2)
+        {
+            string word = words[i];
+            var o = new Dropdown.OptionData();
+            o.text = word;
+            options.Add(o);
+        }
+        skeletonDropdown.AddOptions(options);
+    }
+    
    void handleAvatarList(string stringArray)
     {
         
@@ -310,14 +331,18 @@ public class RESTGUIManager : MonoBehaviour
     }
     public void PlusButtonIsClicked()
     {
-        setActive = !setActive;
+        
         okay.gameObject.SetActive(true);
         file_path.gameObject.SetActive(true);
         cancel.gameObject.SetActive(true);
+        rename_file.gameObject.SetActive(true);
+        skeletonDropdown.gameObject.SetActive(true);
     }
     public void CancelDialogButtonIsClicked()
     {
         file_path.text = "";
+        skeletonDropdown.gameObject.SetActive(false);
+        rename_file.gameObject.SetActive(false);
         okayDialog.gameObject.SetActive(false);
         deleteDialog.gameObject.SetActive(false);
         dialogBox.text = "";
@@ -327,9 +352,15 @@ public class RESTGUIManager : MonoBehaviour
     public void OkayButtonIsClicked()
     {
         u_path = file_path.text;
-        if (String.IsNullOrEmpty(u_path))
+        string skeletonName = skeletonDropdown.options[skeletonDropdown.value].text;
+        print(skeletonName);
+        if (String.IsNullOrEmpty(file_path.text) || String.IsNullOrEmpty(rename_file.text))
         {
             print("Field is empty ....");
+        }
+        else if (String.IsNullOrEmpty(skeletonName))
+        {
+            print(" choose skeleton type from dropdown...");
         }
         else
         {
@@ -337,6 +368,7 @@ public class RESTGUIManager : MonoBehaviour
             okayDialog.gameObject.SetActive(true);
             dialogBox.text = "Are you sure?";
             cancelDialog.gameObject.SetActive(true);
+            
         }
     }
     
@@ -344,9 +376,21 @@ public class RESTGUIManager : MonoBehaviour
     {
         okay.gameObject.SetActive(false);
         file_path.gameObject.SetActive(false);
+        rename_file.gameObject.SetActive(false);
         cancel.gameObject.SetActive(false);
+        skeletonDropdown.gameObject.SetActive(false);
+        
     }
+    
+   
     public void OkayDialogButtonIsClicked()
+    {
+        u_path = file_path.text;
+        to_upload();
+        CancelDialogButtonIsClicked();
+    }
+
+    public void to_upload()
     {
         if (String.IsNullOrEmpty(u_path))
         {
@@ -354,16 +398,18 @@ public class RESTGUIManager : MonoBehaviour
         }
         else
         {
-            print(u_path);
-           
+            string skeletonName = skeletonDropdown.options[skeletonDropdown.value].text;
+            
+            string dict_upload_string =  "{ \"path\": \"" + file_path.text + "\",\"name\": \"" + rename_file.text + "\",\"skeleton_type\": \"" + skeletonName + "\"}";
+                
             GetSkeleton();
             animationPlayer.ClearGeneratedObjects();
-            animationPlayer.UploadAvatarToServer(u_path);
+            animationPlayer.UploadAvatarToServer(dict_upload_string);
             modelDropdown.ClearOptions();
             avatars.Clear();
             animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
         }
-        CancelDialogButtonIsClicked();
+        
     }
     public void OnChangeModel()
     {

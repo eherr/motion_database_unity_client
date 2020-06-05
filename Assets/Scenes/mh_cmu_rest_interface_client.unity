@@ -2001,6 +2001,16 @@ PrefabInstance:
       propertyPath: deleteDialog
       value: 
       objectReference: {fileID: 1504947839}
+    - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: rename_file
+      value: 
+      objectReference: {fileID: 1504947840}
+    - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: skeletonDropdown
+      value: 
+      objectReference: {fileID: 1504947841}
     - target: {fileID: 114707256687473138, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2584,7 +2594,7 @@ PrefabInstance:
     - target: {fileID: 4506652387925268089, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4506652387925268089, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
@@ -2849,6 +2859,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1504947840 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7960932348482486175, guid: f5ea428d4512b924099dac74e9aa8b23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1504947834}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d199490a83bb2b844b9695cbf13b01ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1504947841 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8041441768611809184, guid: f5ea428d4512b924099dac74e9aa8b23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1504947834}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0b652f32a2cc243917e4028fa0f046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1520814382 stripped
