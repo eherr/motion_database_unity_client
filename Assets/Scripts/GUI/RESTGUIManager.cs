@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using Siccity.GLTFUtility;
 using B83.Win32;
 using System.Linq;
+using Newtonsoft.Json;
 
 [System.Serializable]
 public class AvatarDefinition
@@ -74,7 +75,6 @@ public class RESTGUIManager : MonoBehaviour
         animationPlayer.ProgressBar.gameObject.SetActive(false);
         CancelButtonIsClicked();
         CancelDialogButtonIsClicked();
-        rename_file.text = "default";
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
 #if !UNITY_EDITOR && UNITY_WEBGL
             WebGLInput.captureAllKeyboardInput = false;
@@ -166,10 +166,11 @@ public class RESTGUIManager : MonoBehaviour
     {
         if (aInfo == null)
             return;
-        print("Drop info: ");
-        print(dropInfo.file);
+        print("Drop info not null ");
+        
+        print("Drag and drop proceed");
         PlusButtonIsClicked();
-        to_upload();
+        
         /*
         GetSkeleton();
         animationPlayer.ClearGeneratedObjects();
@@ -341,6 +342,7 @@ public class RESTGUIManager : MonoBehaviour
     public void CancelDialogButtonIsClicked()
     {
         file_path.text = "";
+        rename_file.text = "";
         skeletonDropdown.gameObject.SetActive(false);
         rename_file.gameObject.SetActive(false);
         okayDialog.gameObject.SetActive(false);
@@ -354,7 +356,7 @@ public class RESTGUIManager : MonoBehaviour
         u_path = file_path.text;
         string skeletonName = skeletonDropdown.options[skeletonDropdown.value].text;
         print(skeletonName);
-        if (String.IsNullOrEmpty(file_path.text) || String.IsNullOrEmpty(rename_file.text))
+        if (String.IsNullOrEmpty(file_path.text) )
         {
             print("Field is empty ....");
         }
@@ -389,7 +391,14 @@ public class RESTGUIManager : MonoBehaviour
         to_upload();
         CancelDialogButtonIsClicked();
     }
-
+    public string DictionaryToString(Dictionary < string, string > dictionary) {  
+        string dictionaryString = "{";  
+        foreach(KeyValuePair < string, string > keyValues in dictionary) {  
+            dictionaryString += keyValues.Key + " : " + keyValues.Value + ", ";  
+        }  
+        return dictionaryString.TrimEnd(',', ' ') + "}";  
+    } 
+    
     public void to_upload()
     {
         if (String.IsNullOrEmpty(u_path))
@@ -399,9 +408,19 @@ public class RESTGUIManager : MonoBehaviour
         else
         {
             string skeletonName = skeletonDropdown.options[skeletonDropdown.value].text;
-            
-            string dict_upload_string =  "{ \"path\": \"" + file_path.text + "\",\"name\": \"" + rename_file.text + "\",\"skeleton_type\": \"" + skeletonName + "\"}";
-                
+            if (String.IsNullOrEmpty(rename_file.text))
+            {
+                int pos = u_path.LastIndexOf("\\") + 1;
+                rename_file.text = u_path.Substring(pos, u_path.Length - pos);
+            }
+           // string dict_upload_string =  "{ \"path\": \"" + file_path.text + "\",\"name\": \"" + rename_file.text + "\",\"skeleton_type\": \"" + skeletonName + "\"}";
+            Dictionary<string, string> dict = new Dictionary<string, string>()
+            {
+                {"path",file_path.text},
+                {"name", rename_file.text},
+                {"skeleton_type",skeletonName}
+            };
+            string dict_upload_string = JsonConvert.SerializeObject( dict ); //DictionaryToString(dict);
             GetSkeleton();
             animationPlayer.ClearGeneratedObjects();
             animationPlayer.UploadAvatarToServer(dict_upload_string);
