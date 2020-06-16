@@ -1565,6 +1565,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 864b2c849006c964699d28cc291a9a81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1306077197 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3863536177053192716, guid: f5ea428d4512b924099dac74e9aa8b23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1504947834}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1403495459 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 503529903641975805, guid: f5ea428d4512b924099dac74e9aa8b23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1504947834}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1504947834
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2011,6 +2035,16 @@ PrefabInstance:
       propertyPath: skeletonDropdown
       value: 
       objectReference: {fileID: 1504947841}
+    - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: uploadmodel
+      value: 
+      objectReference: {fileID: 1403495459}
+    - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: deletemodel
+      value: 
+      objectReference: {fileID: 1306077197}
     - target: {fileID: 114707256687473138, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2665,6 +2699,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Plus
+      objectReference: {fileID: 0}
+    - target: {fileID: 6231870497905924264, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 6231870497905924264, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_Type
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7256738090715611594, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}

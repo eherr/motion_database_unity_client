@@ -48,7 +48,9 @@ public class RESTGUIManager : MonoBehaviour
     public int modelIndex;
     public InputField file_path;
     public InputField rename_file;
-   
+
+    public Button uploadmodel;
+    public Button deletemodel;
     public Button okay;
     public Button cancel;
     public Text dialogBox;
@@ -82,7 +84,7 @@ public class RESTGUIManager : MonoBehaviour
 
         GetSkeleton();
         if (sourceSkeletonModel == "")
-            sourceSkeletonModel = "mh_cmu";
+            sourceSkeletonModel = "custom";
         animationPlayer.GetAvatarList(sourceSkeletonModel, handleAvatarList);
         animationPlayer.GetSkeletonList( handleSkeletonList);
 #if UNITY_EDITOR
@@ -558,7 +560,14 @@ public class RESTGUIManager : MonoBehaviour
         Debug.Log("Enable Camera");
     }
 
-
+    public void NotLoggedIn()
+    {
+        Debug.Log("User not registered");
+        uploadmodel.gameObject.SetActive(false);
+        deletemodel.gameObject.SetActive(false);
+        CancelButtonIsClicked();
+        CancelDialogButtonIsClicked();
+    }
     public void DisableCamera()
     {
         if (cameraController != null) cameraController.gameObject.SetActive(false);
