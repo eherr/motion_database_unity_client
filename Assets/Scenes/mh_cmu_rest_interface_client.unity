@@ -2465,6 +2465,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -35
       objectReference: {fileID: 0}
+    - target: {fileID: 1496116944659859941, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 1615275405400758003, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -2524,6 +2529,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1870894372871965119, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 1870894372871965119, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_Type
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3301448407966045571, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
@@ -2695,6 +2710,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 5993729982596867947, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 6192883933237338210, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_Name
@@ -2704,11 +2724,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 6231870497905924264, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_Type
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7256738090715611594, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
