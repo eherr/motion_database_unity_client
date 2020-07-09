@@ -27,7 +27,7 @@ public class RESTGUIManager : MonoBehaviour {
     public Toggle meshToggle;
     public CameraController cameraController;
 
-    public string sourceSkeletonModel;
+    public string skeletonType;
     public bool initialized;
     bool centerCamera = false;
     public bool useMesh = false;
@@ -45,15 +45,18 @@ public class RESTGUIManager : MonoBehaviour {
         centerCamera = false;
         useMesh = false;
         motionDatabase.OnNewAvatarList += fillAvatarList;
-        motionDatabase.GetAvatarList();
+        motionDatabase.GetAvatarList(skeletonType);
 
+        bool loadSkeleton = true;
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
 #if !UNITY_EDITOR && UNITY_WEBGL
-            WebGLInput.captureAllKeyboardInput = false;
+         WebGLInput.captureAllKeyboardInput = false;
+        loadSkeleton = false;
 #endif
-#if UNITY_EDITOR
-        GetSkeleton();
-#endif
+
+        if(loadSkeleton)GetSkeleton();
+
+
 
     }
 
@@ -143,7 +146,7 @@ public class RESTGUIManager : MonoBehaviour {
             modelIndex = newModelIdx;
             GetSkeleton();
             motionDatabase.ClearGeneratedObjects();
-            motionDatabase.LoadAvatar(motionDatabase.avatars[modelIndex].name);
+            motionDatabase.LoadAvatar(motionDatabase.avatars[modelIndex].name, skeletonType);
         }
     }
    
@@ -193,15 +196,16 @@ public class RESTGUIManager : MonoBehaviour {
     public void GetSkeleton()
     { 
 
-        motionDatabase.GetSkeleton(sourceSkeletonModel);
+        motionDatabase.GetSkeleton(skeletonType);
     
     }
 
     public void SetSourceSkeleton(string name){
         Debug.Log("Set source skeleton "+name);
-        if (name != sourceSkeletonModel || !initialized){
-            sourceSkeletonModel = name;
+        if (name != skeletonType || !initialized){
+            skeletonType = name;
             Debug.Log("update skeleton from server");
+            motionDatabase.GetAvatarList(skeletonType);
             GetSkeleton();
             initialized = true;
         }

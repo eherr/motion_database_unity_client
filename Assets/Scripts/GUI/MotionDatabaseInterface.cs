@@ -89,17 +89,19 @@ namespace MotionDatabase
             StartCoroutine(LoadAndRequestBytes("get_sample", message, handleMotion));
         }
 
-        public void LoadAvatar(string name)
+        public void LoadAvatar(string name, string skeletonType)
         {
             print("Get avatar " + name);
-            var message = name;// "{ \"name\": \"" + name + "\"}";
-            StartCoroutine(LoadAndRequestBytes("get_binary", message, handleAvatar));
+            var message = "{ \"name\": \"" + name + "\", \"skeleton_type\": \"" + skeletonType + "\"}";
+            StartCoroutine(LoadAndRequestBytes("download_character_model", message, handleAvatar));
         }
 
-        public void GetAvatarList()
+        public void GetAvatarList(string skeletonType)
         {
             print("Get avatar list");
-            StartCoroutine(GetRequest("get_GLB_list", handleAvatarList));
+            //StartCoroutine(GetRequest("get_character_model_list", handleAvatarList));
+            var message = "{ \"skeleton_type\": \"" + skeletonType + "\"}";
+            StartCoroutine(LoadAndRequest("get_character_model_list", message, handleAvatarList));
         }
 
         public void GetAnnotation()
@@ -229,7 +231,7 @@ namespace MotionDatabase
 
         void handleAvatarList(string stringArray)
         {
-
+            avatars.Clear();
             string[] words = stringArray.Split('"');
 
             for (int i = 1; i < words.Length; i = i + 2)
