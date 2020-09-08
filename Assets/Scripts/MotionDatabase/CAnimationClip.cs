@@ -151,7 +151,7 @@ namespace MotionDatabase
     [System.Serializable]
     public class CAnnotation
     {
-        public Dictionary<string, CAnnotationSection> sections;
+        public Dictionary<string, List<CAnnotationSection>> sections;
     };
 
 }

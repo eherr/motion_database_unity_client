@@ -129,6 +129,7 @@ public class RESTGUIManager : MonoBehaviour {
 
     public void GetMotion()
     {
+
         motionDatabase.GetMotion();
     }
 
@@ -201,6 +202,12 @@ public class RESTGUIManager : MonoBehaviour {
     }
 
     public void SetSourceSkeleton(string name){
+        useMesh = false;
+        meshToggle.SetIsOnWithoutNotify(useMesh);
+        motionDatabase.ToggleAnimation();
+        motionDatabase.player.SetAvatarMesh(null, null);
+        motionDatabase.ClearGeneratedObjects();
+
         Debug.Log("Set source skeleton "+name);
         if (name != skeletonType || !initialized){
             skeletonType = name;
