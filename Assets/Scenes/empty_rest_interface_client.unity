@@ -484,12 +484,12 @@ RectTransform:
   m_Children:
   - {fileID: 1358202302}
   - {fileID: 1669421943}
-  m_Father: {fileID: 774666860}
-  m_RootOrder: 9
+  m_Father: {fileID: 1260765974}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 785.87, y: -510}
+  m_AnchoredPosition: {x: 773.37, y: -41.30136}
   m_SizeDelta: {x: 101.74, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &260602626
@@ -1267,13 +1267,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94cda9af415ee954982ea9863c1fd871, type: 3}
+--- !u!224 &1260765974 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 224283986706096760, guid: f5ea428d4512b924099dac74e9aa8b23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1504947834}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1295784684 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
     type: 3}
   m_PrefabInstance: {fileID: 1504947834}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1763102280}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 864b2c849006c964699d28cc291a9a81, type: 3}
@@ -1390,7 +1396,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1840437250308894, guid: f5ea428d4512b924099dac74e9aa8b23, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1888057774789770, guid: f5ea428d4512b924099dac74e9aa8b23, type: 3}
       propertyPath: m_IsActive
@@ -1684,6 +1690,11 @@ PrefabInstance:
       propertyPath: meshToggle
       value: 
       objectReference: {fileID: 260602626}
+    - target: {fileID: 114588549043663796, guid: f5ea428d4512b924099dac74e9aa8b23,
+        type: 3}
+      propertyPath: skeletonType
+      value: mh_cmu
+      objectReference: {fileID: 0}
     - target: {fileID: 114707256687473138, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2007,22 +2018,22 @@ PrefabInstance:
     - target: {fileID: 224873387933553494, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224873387933553494, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224873387933553494, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 49.155
       objectReference: {fileID: 0}
     - target: {fileID: 224873387933553494, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -17.1
       objectReference: {fileID: 0}
     - target: {fileID: 224873387933553494, guid: f5ea428d4512b924099dac74e9aa8b23,
         type: 3}
@@ -2392,6 +2403,34 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 9
+--- !u!1 &1763102280 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1883190855340560, guid: f5ea428d4512b924099dac74e9aa8b23,
+    type: 3}
+  m_PrefabInstance: {fileID: 1504947834}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1763102284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763102280}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8fade65dd9756a4b8e2c14036a1e61f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toggleKey: 96
+  openOnStart: 1
+  shakeToOpen: 1
+  shakeRequiresTouch: 0
+  shakeAcceleration: 3
+  toggleThresholdSeconds: 0.5
+  restrictLogCount: 0
+  maxLogCount: 1000
+  logFontSize: 12
+  scaleFactor: 1
 --- !u!1 &1848597147 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1358647145351374, guid: 94cda9af415ee954982ea9863c1fd871,
