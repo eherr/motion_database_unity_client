@@ -23,12 +23,14 @@ public class CameraController : MonoBehaviour
     public float pitch = 0;
     public float yaw = 0;
     public float zoom = 0;
+    public bool Active;
     public Transform cameraTransform;
     public Transform cameraTarget;
     const int ROTATE_BUTTON = 0;//1;
     const int TRANSLATE_BUTTON = 1;//2;
     void Start()
     {
+        Active = true;
         isRotating = false;
         isTranslating = false;
         //set initial values from transform
@@ -44,6 +46,7 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        if (!Active) return;
         if(cameraTarget != null)
         {
             transform.position = cameraTarget.position;

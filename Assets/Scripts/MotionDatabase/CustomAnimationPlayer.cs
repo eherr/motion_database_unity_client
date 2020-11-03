@@ -13,6 +13,10 @@ namespace MotionDatabase {
    
         public bool playAnimation = false;
         public CAnimationClip motion = null;
+        public List<List<int>> frameLabels;
+        public List<string> labels;
+        public CAnnotation annotation;
+        public CLegacyAnnotation legacyAnnotation;
         public int frameIdx = 0;
         public Transform rootTransform;
         public GameObject agentGeometry;
@@ -35,7 +39,6 @@ namespace MotionDatabase {
         int numFrames = 0;
         public SkeletonManager skeletonManager;
         string skeletonJointTag = "SKELETON_JOINT";
-
         public void Start () {
             rootMeshes = new List<MeshRenderer>();
             agentMeshes = new List<SkinnedMeshRenderer>();
@@ -103,7 +106,8 @@ namespace MotionDatabase {
         }
         public void ProcessMotionBytes(byte[] motionBytes, Vector3 offset, bool startAnimation=true)
         {
-
+            annotation = null;
+            legacyAnnotation = null;
             Stream stream = new MemoryStream(motionBytes);
             BsonReader reader = new BsonReader(stream);
             JsonSerializer serializer = new JsonSerializer();
@@ -150,13 +154,31 @@ namespace MotionDatabase {
             JsonSerializer serializer = new JsonSerializer();
             JsonReader reader = new JsonTextReader(new StringReader(annotationSring));
             bool success = false;
-            try { 
-                var annotation = serializer.Deserialize<CLegacyAnnotation>(reader);
-                success = true;
-                Debug.Log(annotation);
+            try
+            {
+                legacyAnnotation = serializer.Deserialize<CLegacyAnnotation>(reader);
 
-                numFrames = motion.GetNumFrames();
-                //TODO process and visualize
+
+                frameLabels = new List<List<int>>();
+                labels = new List<string>();
+                for (int j = 0; j < legacyAnnotation.sections.Count; j++) {
+
+                    labels.Add("c" + j.ToString());
+                }
+               numFrames = motion.GetNumFrames();
+
+                for (int i =0; i < numFrames; i++) {
+                    frameLabels.Add(new List<int>());
+                    for (int j = 0; j < legacyAnnotation.sections.Count; j++)
+                    {
+
+                        if (legacyAnnotation.sections[j].start_idx < i && i < legacyAnnotation.sections[j].end_idx)
+                        {
+                            frameLabels[i].Add(j);//store index of label
+                        }
+                    }
+                }
+                success = true;
             }
             catch
             {
@@ -169,12 +191,32 @@ namespace MotionDatabase {
             
             try
             {
-                var annotation = serializer.Deserialize<CAnnotation>(reader);
+                annotation = serializer.Deserialize<CAnnotation>(reader);
 
                 Debug.Log(annotation);
-
                 numFrames = motion.GetNumFrames();
-                //TODO process and visualize
+                frameLabels = new List<List<int>>();
+                labels = new List<string>();
+                foreach (var label in annotation.sections.Keys)
+                {
+                    labels.Add(label);
+                }
+                numFrames = motion.GetNumFrames();
+
+                for (int i = 0; i < numFrames; i++)
+                {
+                    frameLabels.Add(new List<int>());
+                    foreach (var label in labels)
+                    {
+                        for (int j = 0; j < annotation.sections[label].Count; j++)
+                        {
+                            if (annotation.sections[label][j].start_idx < i && i < annotation.sections[label][j].end_idx)
+                            {
+                                frameLabels[i].Add(j);//store index of label
+                            }
+                        }
+                    }
+                }
             }
             catch
             {
