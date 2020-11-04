@@ -36,9 +36,16 @@ public class RESTGUIManager : MonoBehaviour {
     List<GameObject> generatedObjects = new List<GameObject>();
     GUIStyle style = new GUIStyle();
     Texture2D whiteTexture;
+    int categoryOffset;
+    public GameObject annotationControls;
+    public float annotationDisplayHeight = 50f;
+    public float annotationDisplayWidth = Screen.width* 0.877f;
+    public float boxWidth = 10;//SET BY ZOOM 
+    public float boxHeight = 10;// annotationDisplayHeight / nCategories;
     // Use this for initialization
     void Start()
     {
+        categoryOffset = 0;
         modelIndex = 0;
         userInteraction = false;
         initialized = false;
@@ -302,30 +309,26 @@ public class RESTGUIManager : MonoBehaviour {
     {
 
         //backround
-        float annotationDisplayHeight = 50f;
-        float annotationDisplayWidth = Screen.width;
         float startX = 0;
         float startY = 0.8f* Screen.height;
-        DrawRectangle(new Rect(startX, startY, Screen.width, annotationDisplayHeight), new Color(0,0,0));
+        DrawRectangle(new Rect(startX, startY, annotationDisplayWidth, annotationDisplayHeight), new Color(0,0,0));
         //annotation labels
-        float labelWidth = 0.05f*Screen.width;
+        float labelWidth = 0.05f* annotationDisplayWidth;
 
-
-        float boxWidth = 10;//SET BY ZOOM Mathf.Max(timeLineWidth / nFrames, 1f);
         float timeLineWidth = annotationDisplayWidth - labelWidth;
         int nFrames = motionDatabase.player.GetNumFrames();
         if (nFrames <= 0) return;
         if (motionDatabase.player.frameLabels == null) return;
         //Debug.Log("n frames" + nFrames.ToString() + " "+ timeLineWidth.ToString()+" "+ boxWidth.ToString());
         int nCategories = Mathf.Max(motionDatabase.player.labels.Count, 1);
-        float boxHeight = annotationDisplayHeight / nCategories;
-
+        int nDisplayedCategories = (int)(annotationDisplayHeight / boxHeight);
         Color frameMarkerColor = new Color(0, 0, 1);
         Color emptyColor = new Color(1, 0, 0);
         Color labelBackColor = new Color(0, 1, 0);
         float yPixelOffset = 0;
         GUIContent content;
-        for (int j = 0; j < nCategories; j++)
+        int categoryEnd = Mathf.Min(categoryOffset + nDisplayedCategories, nCategories);
+        for (int j = categoryOffset; j < categoryEnd; j++)
         {
             var pos = new Rect(startX, startY + yPixelOffset, labelWidth, boxHeight);
             DrawRectangle(pos, labelBackColor);
@@ -336,7 +339,7 @@ public class RESTGUIManager : MonoBehaviour {
 
             GUI.Box(pos, content, style);
      
-        yPixelOffset += boxHeight;
+            yPixelOffset += boxHeight;
         }
 
 
@@ -365,7 +368,7 @@ public class RESTGUIManager : MonoBehaviour {
         for (int i = start; i < end; i++)
         {
             yPixelOffset = 0;
-            for (int j = 0; j < nCategories; j++) {
+            for (int j = categoryOffset; j < categoryEnd; j++) {
                 if (i < motionDatabase.player.frameLabels.Count && motionDatabase.player.frameLabels[i].Contains(j)) { 
                     DrawRectangle(new Rect(startX + xPixelOffset + wMargin, startY + yPixelOffset + hMargin, boxWidth - wMargin, boxHeight - hMargin), emptyColor);
                 }
@@ -415,5 +418,22 @@ public class RESTGUIManager : MonoBehaviour {
     public void ToggleAnnotation()
     {
         showAnnotation = !showAnnotation;
+        annotationControls.SetActive(showAnnotation);
+    }
+
+    public void AnnotationScrollUp()
+    {
+
+        categoryOffset = Mathf.Max(categoryOffset - 1,0);
+    }
+
+    public void AnnotationScrollDown()
+    {
+        int nCategories = Mathf.Max(motionDatabase.player.labels.Count, 1);
+        int nDisplayedCategories = (int)(annotationDisplayHeight / boxHeight);
+        if (nCategories > nDisplayedCategories) {
+            int maxScroll = nCategories - nDisplayedCategories;
+            categoryOffset = Mathf.Min(categoryOffset + 1, maxScroll);
+        }
     }
 }
