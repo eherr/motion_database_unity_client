@@ -156,6 +156,7 @@ namespace MotionDatabase {
             bool success = false;
             try
             {
+                Debug.Log("process legacy annotation format");
                 legacyAnnotation = serializer.Deserialize<CLegacyAnnotation>(reader);
 
 
@@ -191,6 +192,7 @@ namespace MotionDatabase {
             
             try
             {
+                Debug.Log("process annotation format");
                 annotation = serializer.Deserialize<CAnnotation>(reader);
 
                 Debug.Log(annotation);
