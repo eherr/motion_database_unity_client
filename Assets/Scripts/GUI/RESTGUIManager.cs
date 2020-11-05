@@ -22,6 +22,7 @@ public class RESTGUIManager : MonoBehaviour {
     public Text frameCountText;
     public GameObject modelPanel;
     public GameObject settingsPanel;
+    public GameObject annotationPanel;
 
     public Dropdown modelDropdown;
     public Toggle meshToggle;
@@ -37,11 +38,10 @@ public class RESTGUIManager : MonoBehaviour {
     GUIStyle style = new GUIStyle();
     Texture2D whiteTexture;
     int categoryOffset;
-    public GameObject annotationControls;
-    public float annotationDisplayHeight = 50f;
-    public float annotationDisplayWidth = Screen.width* 0.877f;
     public float boxWidth = 10;//SET BY ZOOM 
     public float boxHeight = 10;// annotationDisplayHeight / nCategories;
+    public float annotationBorderWidth = 10;
+    Rect annotationRect;
     // Use this for initialization
     void Start()
     {
@@ -59,6 +59,14 @@ public class RESTGUIManager : MonoBehaviour {
         whiteTexture = new Texture2D(1, 1);
         whiteTexture.SetPixel(0, 0, Color.white);
         whiteTexture.Apply();
+        if (annotationPanel != null) {
+            var panelTransform = annotationPanel.GetComponent<RectTransform>();
+            annotationRect = RectTransformToScreenSpace(panelTransform);
+            annotationRect.x = annotationRect.x + annotationBorderWidth / 2;
+            annotationRect.y = annotationRect.y + annotationBorderWidth / 2;
+            annotationRect.width = (annotationRect.width - annotationBorderWidth / 2) * 0.93f;
+            annotationRect.height = annotationRect.height - annotationBorderWidth / 2 - 10;
+        }
 
         bool loadSkeleton = true;
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
@@ -301,37 +309,41 @@ public class RESTGUIManager : MonoBehaviour {
 
     void OnGUI()
     {
-        if (showAnnotation)DrawAnnotation();
+        if (showAnnotation && annotationPanel != null) DrawAnnotation();
 
     }
 
     void DrawAnnotation()
     {
-
         //backround
         float startX = 0;
         float startY = 0.8f* Screen.height;
-        DrawRectangle(new Rect(startX, startY, annotationDisplayWidth, annotationDisplayHeight), new Color(0,0,0));
-        //annotation labels
-        float labelWidth = 0.05f* annotationDisplayWidth;
+        //var backgroundRect = new Rect(startX, startY, annotationDisplayWidth, annotationDisplayHeight);
 
-        float timeLineWidth = annotationDisplayWidth - labelWidth;
+
+        startX = annotationRect.x;
+        startY = annotationRect.y;
+        DrawRectangle(annotationRect, new Color(0, 0, 0));
+        //annotation labels
+        float labelWidth = annotationRect.width * 0.05f;
+        float timeLineWidth = annotationRect.width - labelWidth;
         int nFrames = motionDatabase.player.GetNumFrames();
         if (nFrames <= 0) return;
         if (motionDatabase.player.frameLabels == null) return;
         //Debug.Log("n frames" + nFrames.ToString() + " "+ timeLineWidth.ToString()+" "+ boxWidth.ToString());
         int nCategories = Mathf.Max(motionDatabase.player.labels.Count, 1);
-        int nDisplayedCategories = (int)(annotationDisplayHeight / boxHeight);
+        int nDisplayedCategories = (int)(annotationRect.height / boxHeight);
         Color frameMarkerColor = new Color(0, 0, 1);
         Color emptyColor = new Color(1, 0, 0);
         Color labelBackColor = new Color(0, 1, 0);
         float yPixelOffset = 0;
         GUIContent content;
         int categoryEnd = Mathf.Min(categoryOffset + nDisplayedCategories, nCategories);
+        DrawRectangle(new Rect(startX, startY, labelWidth, annotationRect.height), labelBackColor);
         for (int j = categoryOffset; j < categoryEnd; j++)
         {
             var pos = new Rect(startX, startY + yPixelOffset, labelWidth, boxHeight);
-            DrawRectangle(pos, labelBackColor);
+            
             content = new GUIContent(motionDatabase.player.labels[j], whiteTexture, motionDatabase.player.labels[j]);
 
             // Position the Text and Texture in the center of the box
@@ -342,12 +354,11 @@ public class RESTGUIManager : MonoBehaviour {
             yPixelOffset += boxHeight;
         }
 
-
         //annotation box
-        startX = labelWidth;
+        startX = labelWidth+20;
         Debug.Log("n frames" + nFrames.ToString() + " "+ nCategories.ToString());
         float wMargin = Mathf.Max(0.1f * boxWidth, 1f);
-        float hMargin = Mathf.Max(0.1f * annotationDisplayHeight, 1f);
+        float hMargin = Mathf.Max(0.1f * annotationRect.height, 1f);
         //always display the same amount of frames based on the box size
         //move the window of frames that are displayed based on the current frame
         int nDisplayedFrames = (int)(timeLineWidth/boxWidth);
@@ -361,7 +372,6 @@ public class RESTGUIManager : MonoBehaviour {
             start = Mathf.Max(nFrames - nDisplayedFrames,0); 
         }
 
-
         float xPixelOffset = 0;
         yPixelOffset = 0;
         int end = Mathf.Min(start + nDisplayedFrames, nFrames);
@@ -372,17 +382,39 @@ public class RESTGUIManager : MonoBehaviour {
                 if (i < motionDatabase.player.frameLabels.Count && motionDatabase.player.frameLabels[i].Contains(j)) { 
                     DrawRectangle(new Rect(startX + xPixelOffset + wMargin, startY + yPixelOffset + hMargin, boxWidth - wMargin, boxHeight - hMargin), emptyColor);
                 }
-
                 yPixelOffset += boxHeight;
             }
             if (i == motionDatabase.player.frameIdx) {
-                DrawScreenRectBorder(new Rect(startX + xPixelOffset + wMargin, startY + hMargin, boxWidth - wMargin, annotationDisplayHeight - hMargin), wMargin, frameMarkerColor);
+                DrawScreenRectBorder(new Rect(startX + xPixelOffset + wMargin, startY + hMargin, boxWidth - wMargin, annotationRect.height - hMargin), wMargin, frameMarkerColor);
             }
             xPixelOffset += boxWidth;
 
         }
 
     }
+
+    public void ToggleAnnotation()
+    {
+        showAnnotation = !showAnnotation;
+        annotationPanel.SetActive(showAnnotation);
+    }
+
+    public void AnnotationScrollUp()
+    {
+
+        categoryOffset = Mathf.Max(categoryOffset - 1,0);
+    }
+
+    public void AnnotationScrollDown()
+    {
+        int nCategories = Mathf.Max(motionDatabase.player.labels.Count, 1);
+        int nDisplayedCategories = (int)(annotationRect.height / boxHeight);
+        if (nCategories > nDisplayedCategories) {
+            int maxScroll = nCategories - nDisplayedCategories;
+            categoryOffset = Mathf.Min(categoryOffset + 1, maxScroll);
+        }
+    }
+
 
     /// <summary>
     /// https://hyunkell.com/blog/rts-style-unit-selection-in-unity-5/
@@ -414,26 +446,18 @@ public class RESTGUIManager : MonoBehaviour {
         // Bottom
         DrawRectangle(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
     }
-
-    public void ToggleAnnotation()
+    /// <summary>
+    /// https://answers.unity.com/questions/1013011/convert-recttransform-rect-to-screen-space.html
+    /// </summary>
+    /// <param name="transform"></param>
+    /// <returns></returns>
+    public static Rect RectTransformToScreenSpace(RectTransform transform)
     {
-        showAnnotation = !showAnnotation;
-        annotationControls.SetActive(showAnnotation);
+        Vector2 size = Vector2.Scale(transform.rect.size, transform.lossyScale);
+        Rect rect = new Rect(transform.position.x, Screen.height - transform.position.y, size.x, size.y);
+        rect.x -= (transform.pivot.x * size.x);
+        rect.y -= ((1.0f - transform.pivot.y) * size.y);
+        return rect;
     }
 
-    public void AnnotationScrollUp()
-    {
-
-        categoryOffset = Mathf.Max(categoryOffset - 1,0);
-    }
-
-    public void AnnotationScrollDown()
-    {
-        int nCategories = Mathf.Max(motionDatabase.player.labels.Count, 1);
-        int nDisplayedCategories = (int)(annotationDisplayHeight / boxHeight);
-        if (nCategories > nDisplayedCategories) {
-            int maxScroll = nCategories - nDisplayedCategories;
-            categoryOffset = Mathf.Min(categoryOffset + 1, maxScroll);
-        }
-    }
 }
