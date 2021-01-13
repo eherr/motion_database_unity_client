@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-namespace MotionDatabaseInterface
+namespace MotionDatabase
 {
   
     [System.Serializable]
@@ -151,7 +151,7 @@ namespace MotionDatabaseInterface
     [System.Serializable]
     public class CAnnotation
     {
-        public Dictionary<string, CAnnotationSection> sections;
+        public Dictionary<string, List<CAnnotationSection>> sections;
     };
 
 }

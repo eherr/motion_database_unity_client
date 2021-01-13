@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MotionDatabaseInterface
+namespace MotionDatabase
 {
 	[System.Serializable]
 	public class CPose : CKeyframe

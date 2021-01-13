@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "motion_database_unity_client", "Assembly-CSharp.csproj", "{B2492F5C-99E7-0D7D-2340-BF9CBB9ACBD0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Siccity.GLTFUtility", "Siccity.GLTFUtility.csproj", "{0A2487B9-C819-2E44-BB14-125AB3EB1805}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Siccity.GLTFUtility.Editor", "Siccity.GLTFUtility.Editor.csproj", "{0143929A-27DD-1664-B688-F96E0C2AF203}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,15 +11,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B2492F5C-99E7-0D7D-2340-BF9CBB9ACBD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2492F5C-99E7-0D7D-2340-BF9CBB9ACBD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2492F5C-99E7-0D7D-2340-BF9CBB9ACBD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2492F5C-99E7-0D7D-2340-BF9CBB9ACBD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A2487B9-C819-2E44-BB14-125AB3EB1805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A2487B9-C819-2E44-BB14-125AB3EB1805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A2487B9-C819-2E44-BB14-125AB3EB1805}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A2487B9-C819-2E44-BB14-125AB3EB1805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0143929A-27DD-1664-B688-F96E0C2AF203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0143929A-27DD-1664-B688-F96E0C2AF203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0143929A-27DD-1664-B688-F96E0C2AF203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0143929A-27DD-1664-B688-F96E0C2AF203}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal

@@ -7,56 +7,39 @@ using UnityEngine.AI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 
-namespace MotionDatabaseInterface { 
+namespace MotionDatabase { 
     public class CustomAnimationPlayer : MonoBehaviour
     {
    
         public bool playAnimation = false;
         public CAnimationClip motion = null;
+        public List<List<int>> frameLabels;
+        public List<string> labels;
+        public CAnnotation annotation;
+        public CLegacyAnnotation legacyAnnotation;
         public int frameIdx = 0;
         public Transform rootTransform;
         public GameObject agentGeometry;
-        public MGJoint root=null;
+        public MGJoint root = null;
         public bool loop = false;
         public float frameTime = 0.013889f;
-        [Range(-4.0f, 4.0f)]
+        [Range(0, 4.0f)]
         public float speedFactor = 1.0f;
         public float scaleFactor = 0.01f;
         public float animationTime = 0.0f;
         public float maxAnimatTime = 1.0f;
         public bool init = false;
         protected Dictionary<string, int> indexMap;
-        LineRenderer lineRenderer;
-        public float lineWidth = 0.05f;
-        public bool drawLines;
-
-        public Material lineMaterial;
         private bool showMesh = false;
         public GameObject skeleton;
         List<MeshRenderer> rootMeshes;
         List<SkinnedMeshRenderer> agentMeshes;
         SkeletonDesc skeletonDesc;
-
         public string skeletonModel;
-
         int numFrames = 0;
-
         public SkeletonManager skeletonManager;
-
         string skeletonJointTag = "SKELETON_JOINT";
-
         public void Start () {
-            lineRenderer = gameObject.AddComponent<LineRenderer>();
-            if (drawLines) { 
-                lineRenderer.startWidth = lineWidth;
-                lineRenderer.endWidth = lineWidth;
-                lineRenderer.material = lineMaterial;
-                lineRenderer.positionCount = 0;
-            }
-            else
-            {
-                lineRenderer.enabled = false;
-            }
             rootMeshes = new List<MeshRenderer>();
             agentMeshes = new List<SkinnedMeshRenderer>();
             if (rootTransform != null) { 
@@ -71,8 +54,6 @@ namespace MotionDatabaseInterface {
                     agentMeshes.Add(m);
                 }
             }
-
-          
         }
 
         public void Update()
@@ -85,16 +66,14 @@ namespace MotionDatabaseInterface {
                     frameIdx = numFrames-1;
                 }
                 Vector3 pos = motion.getRootTranslation(frameIdx);
-                if (skeleton != null)
+                if (rootTransform != null)
                 {
                     var rootDesc = skeletonDesc.jointDescs[0];
                     Vector3 offset = new Vector3(rootDesc.offset[0],rootDesc.offset[1],rootDesc.offset[2]);
-                    skeleton.transform.position = pos + offset*scaleFactor;// skeletonDesc.referencePose.translations[0];
-                }else{
-                    gameObject.transform.position = pos;
+                    rootTransform.position = pos + offset*scaleFactor;
                 }
                 root.setPose(motion.getPose(frameIdx), indexMap);
-                //Debug.Log("update animation"+ frameIdx.ToString() + speedFactor.ToString() + maxAnimatTime.ToString() + playAnimation.ToString()+ frameTime.ToString());
+              
                 if (playAnimation)
                 {
                     animationTime += Time.deltaTime * speedFactor;
@@ -113,9 +92,6 @@ namespace MotionDatabaseInterface {
                 }
             }
 
-            if(!showMesh)
-                DrawDebugSkeleton();
-
         }
                 
         ///https://stackoverflow.com/questions/1879395/how-do-i-generate-a-stream-from-a-string
@@ -130,7 +106,8 @@ namespace MotionDatabaseInterface {
         }
         public void ProcessMotionBytes(byte[] motionBytes, Vector3 offset, bool startAnimation=true)
         {
-
+            annotation = null;
+            legacyAnnotation = null;
             Stream stream = new MemoryStream(motionBytes);
             BsonReader reader = new BsonReader(stream);
             JsonSerializer serializer = new JsonSerializer();
@@ -150,7 +127,7 @@ namespace MotionDatabaseInterface {
         {
 
             string oldSkeletonModel = motion.skeletonModel;
-            //motion = JsonUtility.FromJson<CAnimationClipSmall>(motionString);
+            
             motion = JsonConvert.DeserializeObject<CAnimationClip>(motionString);
             motion.scaleTranslations(scaleFactor);
             motion.translateFrames(offset);
@@ -162,7 +139,7 @@ namespace MotionDatabaseInterface {
             numFrames = motion.GetNumFrames();
             maxAnimatTime = numFrames * frameTime;
             init = true;
-            //Debug.Log("processed motion "+ this.motion.frames.Length.ToString());
+            
         }
 
         /// <summary>
@@ -177,13 +154,32 @@ namespace MotionDatabaseInterface {
             JsonSerializer serializer = new JsonSerializer();
             JsonReader reader = new JsonTextReader(new StringReader(annotationSring));
             bool success = false;
-            try { 
-                var annotation = serializer.Deserialize<CLegacyAnnotation>(reader);
-                success = true;
-                Debug.Log(annotation);
+            try
+            {
+                Debug.Log("process legacy annotation format");
+                legacyAnnotation = serializer.Deserialize<CLegacyAnnotation>(reader);
 
-                numFrames = motion.GetNumFrames();
-                //TODO process and visualize
+
+                frameLabels = new List<List<int>>();
+                labels = new List<string>();
+                for (int j = 0; j < legacyAnnotation.sections.Count; j++) {
+
+                    labels.Add("c" + j.ToString());
+                }
+               numFrames = motion.GetNumFrames();
+
+                for (int i =0; i < numFrames; i++) {
+                    frameLabels.Add(new List<int>());
+                    for (int j = 0; j < legacyAnnotation.sections.Count; j++)
+                    {
+
+                        if (legacyAnnotation.sections[j].start_idx < i && i < legacyAnnotation.sections[j].end_idx)
+                        {
+                            frameLabels[i].Add(j);//store index of label
+                        }
+                    }
+                }
+                success = true;
             }
             catch
             {
@@ -196,12 +192,33 @@ namespace MotionDatabaseInterface {
             
             try
             {
-                var annotation = serializer.Deserialize<CAnnotation>(reader);
+                Debug.Log("process annotation format");
+                annotation = serializer.Deserialize<CAnnotation>(reader);
 
                 Debug.Log(annotation);
-
                 numFrames = motion.GetNumFrames();
-                //TODO process and visualize
+                frameLabels = new List<List<int>>();
+                labels = new List<string>();
+                foreach (var label in annotation.sections.Keys)
+                {
+                    labels.Add(label);
+                }
+                numFrames = motion.GetNumFrames();
+
+                for (int i = 0; i < numFrames; i++)
+                {
+                    frameLabels.Add(new List<int>());
+                    foreach (var label in labels)
+                    {
+                        for (int j = 0; j < annotation.sections[label].Count; j++)
+                        {
+                            if (annotation.sections[label][j].start_idx < i && i < annotation.sections[label][j].end_idx)
+                            {
+                                frameLabels[i].Add(j);//store index of label
+                            }
+                        }
+                    }
+                }
             }
             catch
             {
@@ -271,7 +288,6 @@ namespace MotionDatabaseInterface {
                     Destroy(j);
                 }
            }
-
         }
 
 
@@ -286,20 +302,30 @@ namespace MotionDatabaseInterface {
 
         public void ProcessSkeletonString(string skeletonString)
         {
-            if(skeletonManager!= null) skeletonManager.HideSkeletons();
+            if (skeletonManager != null) skeletonManager.HideSkeletons();
             skeletonDesc = JsonUtility.FromJson<SkeletonDesc>(skeletonString);
 
             buildPoseParameterIndexMap(skeletonDesc);
+            SetupSkeleton();
+        }
+
+        public void SetupSkeleton()
+        {
+            if (skeletonDesc == null) return;
+
             if (showMesh)
             {
-                if (skeleton != null) DestroySkeleton();//destroyHierarchy(skeleton.transform);
-                lineRenderer.positionCount = 0;
+                if (skeleton != null) DestroySkeleton();
                 skeletonDesc.referencePose.ScaleTranslations(scaleFactor);
                 initSkeletonFromExistingCharacter(rootTransform, skeletonDesc);
-            }else{
-                skeletonDesc.referencePose.ScaleTranslations(scaleFactor); // * 2.5f
+
+                Debug.Log("init skeleton from existing character");
+            }
+            else{
+                skeletonDesc.referencePose.ScaleTranslations(scaleFactor);
            
                 skeleton = skeletonManager.GetSkeleton(skeletonDesc);
+                rootTransform = skeleton.transform;
                 root = skeletonManager.GetRootJoint(skeletonDesc);
                 skeletonManager.ShowSkeleton(skeletonDesc.name); 
                 root.setPose(skeletonDesc.referencePose, indexMap);
@@ -307,10 +333,10 @@ namespace MotionDatabaseInterface {
                     var t = skeletonDesc.referencePose.translations[0];
                     var rootDesc = skeletonDesc.jointDescs[0];
                     Vector3 offset = new Vector3(rootDesc.offset[0],rootDesc.offset[1],rootDesc.offset[2]);
-                    skeleton.transform.position = t + offset*scaleFactor;
+                    rootTransform.position = t + offset*scaleFactor;
                 }
+                Debug.Log("generated skeleton");
             }
-            Debug.Log("processed skeleton");
         }
         public void initSkeletonFromExistingCharacter(Transform rootTransform, SkeletonDesc skeletonDesc)
         {
@@ -344,18 +370,7 @@ namespace MotionDatabaseInterface {
             }
         }
 
-
-        public void DrawDebugSkeleton()
-        {
-            if (root == null)
-                return;
-            List<Vector3> jointPositions = new List<Vector3>();
-            root.getJointPositions(jointPositions);
-            if (drawLines) { 
-                lineRenderer.positionCount = jointPositions.Count;
-                lineRenderer.SetPositions(jointPositions.ToArray());
-            }
-        }
+        
 
         public List<Vector3> GetJointAngles()
         {
@@ -372,7 +387,6 @@ namespace MotionDatabaseInterface {
             {
                 return 0;
             }
-            
         }
 
         public void SetCurrentFrame(int newFrameIdx)
@@ -408,14 +422,18 @@ namespace MotionDatabaseInterface {
                 {
                     rootMeshes.Add(s);
                 }
+                if (agentGeometry != null) { 
                 var _agentMeshes = agentGeometry.GetComponentsInChildren<SkinnedMeshRenderer>();
-                foreach (SkinnedMeshRenderer m in _agentMeshes)
-                {
-                    agentMeshes.Add(m);
+                    foreach (SkinnedMeshRenderer m in _agentMeshes)
+                    {
+                        agentMeshes.Add(m);
+                    }
                 }
+                ShowMesh();
             }
-            ShowMesh();
+
         }
+
     }
 
 }

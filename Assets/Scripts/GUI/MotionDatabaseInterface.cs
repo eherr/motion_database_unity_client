@@ -1,67 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.UI;
+using Siccity.GLTFUtility;
 
-namespace MotionDatabaseInterface
+
+namespace MotionDatabase
 {
 
     [RequireComponent(typeof(CustomAnimationPlayer))]
-    public class CustomAnimationPlayerInterface : RESTInterface
+    public class MotionDatabaseInterface : RESTInterface
     {
         public string clipID;
         public CanvasGroup loadIcon;
-        public CustomAnimationPlayer avatar;
+        public CustomAnimationPlayer player;
+        public List<AvatarDefinition> avatars;
         private bool isLoading;
-        public Toggle meshToggle;
+        List<GameObject> generatedObjects = new List<GameObject>();
+        public bool waitingForSkeleton = false;
+        public delegate void dgEventRaiser();
+        public event dgEventRaiser OnNewAvatarList;
         void Start()
         {
-            avatar = GetComponent<CustomAnimationPlayer>();
+            player = GetComponent<CustomAnimationPlayer>();
             isLoading = false;
+            waitingForSkeleton = false;
         }
 
 
         void handleSkeleton(string response)
         {
-            if (meshToggle.isOn) {
-                avatar.ShowMesh();
-            } else
-            {
-                avatar.HideMesh();
-            }
             
-            avatar.ProcessSkeletonString(response);
+            player.ProcessSkeletonString(response);
+            waitingForSkeleton = false;
         }
 
 
         protected void handleMotion(byte[] response)
         {
-          avatar.ProcessMotionBytes(response, Vector3.zero);
+          player.ProcessMotionBytes(response, Vector3.zero);
           GetAnnotation();
 
 
         }
         protected void handleAnnotation(string response)
         {
-            Debug.Log("reveiced annotation");
-            avatar.ProcessAnnotationString(response);
+            Debug.Log("received annotation");
+            player.ProcessAnnotationString(response);
 
 
         }
 
 
-
         public void GetSkeleton(string skeletonType="")
         {
-            if (avatar != null);
-                avatar.clearMotion();
+            if (player != null);
+                player.clearMotion();
             print("Get skeleton");
             var message = "{}";
             if (skeletonType!= "") { 
                 message = "{ \"skeleton_type\": \"" + skeletonType + "\"}";
             }
+            waitingForSkeleton = true;
             StartCoroutine(LoadAndRequest("get_skeleton", message, handleSkeleton));
+            
         }
 
 
@@ -87,7 +89,20 @@ namespace MotionDatabaseInterface
             StartCoroutine(LoadAndRequestBytes("get_sample", message, handleMotion));
         }
 
+        public void LoadAvatar(string name, string skeletonType)
+        {
+            print("Get avatar " + name);
+            var message = "{ \"name\": \"" + name + "\", \"skeleton_type\": \"" + skeletonType + "\"}";
+            StartCoroutine(LoadAndRequestBytes("download_character_model", message, handleAvatar));
+        }
 
+        public void GetAvatarList(string skeletonType)
+        {
+            print("Get avatar list");
+            //StartCoroutine(GetRequest("get_character_model_list", handleAvatarList));
+            var message = "{ \"skeleton_type\": \"" + skeletonType + "\"}";
+            StartCoroutine(LoadAndRequest("get_character_model_list", message, handleAvatarList));
+        }
 
         public void GetAnnotation()
         {
@@ -122,7 +137,7 @@ namespace MotionDatabaseInterface
         }
         public void ToggleAnimation()
         {
-            avatar.ToggleAnimation();
+            player.ToggleAnimation();
         }
 
 
@@ -136,9 +151,16 @@ namespace MotionDatabaseInterface
             GetSkeleton();
         }
 
+        protected IEnumerator GetRequest(string method, System.Action<string> callback)
+        {
+            Debug.Log("GET request!");
+            yield return StartCoroutine(sendGETRequestCoroutine(method, callback));
+        }
+
+
         protected IEnumerator LoadAndRequest(string method, string messageBody, PostRequestCallback callback)
         {
-            Debug.Log("Loading request!");
+            Debug.Log("POST request!");
             yield return StartCoroutine(Fade(1f));
             loadIcon.blocksRaycasts = true;
 
@@ -147,6 +169,7 @@ namespace MotionDatabaseInterface
             loadIcon.blocksRaycasts = false;
             yield return StartCoroutine(Fade(0f));
         }
+
         protected IEnumerator LoadAndRequestBytes(string method, string messageBody, BytePostRequestCallback callback)
         {
             Debug.Log("Loading request!");
@@ -174,11 +197,51 @@ namespace MotionDatabaseInterface
             isLoading = false;
             Debug.Log("Finish Fade");
         }
-        public void SetAvatarMesh(Transform newRoot, GameObject newGeometry)
+ 
+        protected void handleAvatar(byte[] response)
         {
-            avatar.SetAvatarMesh(newRoot, newGeometry);
+            var model = Importer.LoadFromBytes(response);
+            generatedObjects.Add(model);
+            model.transform.localRotation = Quaternion.identity;
+
+            player.SetAvatarMesh(model.transform, null);
+            if (player != null)
+            {
+                player.playAnimation = false;
+            }
+
+            player.ShowMesh();
+            player.SetupSkeleton();
+            waitingForSkeleton = false;
         }
 
+        public void ClearGeneratedObjects()
+        {
+
+            Debug.Log(generatedObjects.Count);
+            for (int i = 0; i < generatedObjects.Count; ++i)
+            {
+                if (generatedObjects[i] != null)
+                {
+                    Destroy(generatedObjects[i]);
+                }
+            }
+            generatedObjects.Clear();
+        }
+
+        void handleAvatarList(string stringArray)
+        {
+            avatars.Clear();
+            string[] words = stringArray.Split('"');
+
+            for (int i = 1; i < words.Length; i = i + 2)
+            {
+                string word = words[i];
+                avatars.Add(new AvatarDefinition { name = word, skeletonType = "mh_cmu" });
+            }
+            OnNewAvatarList();
+
+        }
     }
 
 }

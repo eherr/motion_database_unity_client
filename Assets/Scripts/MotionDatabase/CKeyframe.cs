@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MotionDatabaseInterface
+namespace MotionDatabase
 {
 	[System.Serializable]
 	public class CKeyframe

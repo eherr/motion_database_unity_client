@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MotionDatabaseInterface{
+namespace MotionDatabase{
 	public class SkeletonManager : MonoBehaviour {
 
 		public float scale = 0.01f;

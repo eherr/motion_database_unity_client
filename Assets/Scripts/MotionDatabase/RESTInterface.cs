@@ -5,7 +5,7 @@ using System.IO;
 using System.Net;
 using UnityEngine.Networking;
 
-namespace MotionDatabaseInterface
+namespace MotionDatabase
 {
 	public delegate void PostRequestCallback(string response);
 
@@ -65,24 +65,10 @@ namespace MotionDatabaseInterface
         protected IEnumerator sendRequestCoroutine(string method, string messageBody, PostRequestCallback callback)
         {
             var data = System.Text.Encoding.UTF8.GetBytes(messageBody);
-           // byte[] bytes = System.Text.Encoding.Default.GetBytes(messageBody);
-            //var data = System.Text.Encoding.UTF8.GetString(bytes);
-            string urlString = "";
-            if (usePortWorkAround && usePort)
-            {
-                urlString = protocol+"://" + url + "/" + port.ToString() + method;
-            }
-            else if (usePort)
-            {
-                urlString = protocol+"://" + url + ":" + port.ToString() + "/" + method;
-            }
-            else
-            {
-                urlString = protocol+"://" + url + "/" + method;
-            }
-           // UnityWebRequest webRequest = UnityWebRequest.Post(urlString, messageBody);
+            string urlString = getMethodURL(method);
+
             UnityWebRequest webRequest = UnityWebRequest.Post(urlString, UnityWebRequest.kHttpVerbPOST);
-            webRequest.uploadHandler= new UploadHandlerRaw(data);
+            webRequest.uploadHandler = new UploadHandlerRaw(data);
             webRequest.downloadHandler = new DownloadHandlerBuffer();
             // Request and wait for the desired page.
             yield return webRequest.SendWebRequest();
@@ -99,7 +85,7 @@ namespace MotionDatabaseInterface
                 callback(text);
             }
         }
-      
+
 
         /// <summary>
         /// Asynchronous HTTP Post request.
@@ -113,24 +99,9 @@ namespace MotionDatabaseInterface
         protected IEnumerator sendRequestCoroutine(string method, string messageBody, BytePostRequestCallback callback)
         {
             var data = System.Text.Encoding.UTF8.GetBytes(messageBody);
-           // byte[] bytes = System.Text.Encoding.Default.GetBytes(messageBody);
-            //var data = System.Text.Encoding.UTF8.GetString(bytes);
-            string urlString = "";
-            if (usePortWorkAround && usePort)
-            {
-                urlString = protocol+"://" + url + "/" + port.ToString() + method;
-            }
-            else if (usePort)
-            {
-                urlString = protocol+"://" + url + ":" + port.ToString() + "/" + method;
-            }
-            else
-            {
-                urlString = protocol+"://" + url + "/" + method;
-            }
-           // UnityWebRequest webRequest = UnityWebRequest.Post(urlString, messageBody);
+            string urlString = getMethodURL(method);
             UnityWebRequest webRequest = UnityWebRequest.Post(urlString, UnityWebRequest.kHttpVerbPOST);
-            webRequest.uploadHandler= new UploadHandlerRaw(data);
+            webRequest.uploadHandler = new UploadHandlerRaw(data);
             webRequest.downloadHandler = new DownloadHandlerBuffer();
             // Request and wait for the desired page.
             yield return webRequest.SendWebRequest();
@@ -142,11 +113,51 @@ namespace MotionDatabaseInterface
             {
                 callback(webRequest.downloadHandler.data);
             }
-           
-           
+
         }
 
+        /// <summary>
+        /// Asynchronous HTTP GET request.
+        /// src: http://stackoverflow.com/questions/27310201/async-requests-in-unity
+        /// https://docs.unity3d.com/Manual/UnityWebRequest-CreatingDownloadHandlers.html
+        /// </summary>
+        /// <param name="method">REST method name.</param>
+        /// <param name="callback">Callback handler that process the response string. </param>
+        /// <returns></returns>
+        protected IEnumerator sendGETRequestCoroutine(string method, System.Action<string> callback)
+        {
 
+            UnityWebRequest webRequest = UnityWebRequest.Get(getMethodURL(method));
+            // Request and wait for the desired page.
+            yield return webRequest.SendWebRequest();
+            if (webRequest.isNetworkError)
+            {
+                print("Error: " + webRequest.error);
+            }
+            else
+            {
+                callback(webRequest.downloadHandler.text);
+            }
+
+        }
+
+        string getMethodURL(string method)
+        {
+            string urlString = "";
+            if (usePortWorkAround && usePort)
+            {
+                urlString = protocol + "://" + url + "/" + port.ToString() + method;
+            }
+            else if (usePort)
+            {
+                urlString = protocol + "://" + url + ":" + port.ToString() + "/" + method;
+            }
+            else
+            {
+                urlString = protocol + "://" + url + "/" + method;
+            }
+            return urlString;
+        }
     }
 
-}
+    }
