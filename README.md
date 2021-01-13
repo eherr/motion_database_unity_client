@@ -2,7 +2,7 @@
 # Motion Database Unity Client
 
 
-Unity app used by the [web client] (https://github.com/eherr/motion_database_webclient) of the [motion database](https://github.com/eherr/motion_database_server) for the visualization of motions.  
+Unity app used by the [web client](https://github.com/eherr/motion_database_webclient) of the [motion database](https://github.com/eherr/motion_database_server) for the visualization of motions.  
 An instance of the database is running on [https://motion.dfki.de](https://motion.dfki.de/index.php/motion-capture-data/).
 
 To integrate the app with the web client it needs to be build for WebGL:
