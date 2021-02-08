@@ -1822,7 +1822,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1504947834}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763102280}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 864b2c849006c964699d28cc291a9a81, type: 3}
@@ -3095,34 +3095,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
---- !u!1 &1763102280 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1883190855340560, guid: f5ea428d4512b924099dac74e9aa8b23,
-    type: 3}
-  m_PrefabInstance: {fileID: 1504947834}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1763102284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763102280}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8fade65dd9756a4b8e2c14036a1e61f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  toggleKey: 96
-  openOnStart: 1
-  shakeToOpen: 1
-  shakeRequiresTouch: 0
-  shakeAcceleration: 3
-  toggleThresholdSeconds: 0.5
-  restrictLogCount: 0
-  maxLogCount: 1000
-  logFontSize: 12
-  scaleFactor: 1
 --- !u!1 &1848597147 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1358647145351374, guid: 94cda9af415ee954982ea9863c1fd871,
