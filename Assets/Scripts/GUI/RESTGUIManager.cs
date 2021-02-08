@@ -60,14 +60,7 @@ public class RESTGUIManager : MonoBehaviour {
         whiteTexture = new Texture2D(1, 1);
         whiteTexture.SetPixel(0, 0, Color.white);
         whiteTexture.Apply();
-        if (annotationPanel != null) {
-            var panelTransform = annotationPanel.GetComponent<RectTransform>();
-            annotationRect = RectTransformToScreenSpace(panelTransform);
-            annotationRect.x = annotationRect.x + annotationBorderWidth / 2;
-            annotationRect.y = annotationRect.y + annotationBorderWidth / 2;
-            annotationRect.width = (annotationRect.width - annotationBorderWidth / 2) * 0.93f;
-            annotationRect.height = annotationRect.height - annotationBorderWidth / 2 - 10;
-        }
+        
 
         bool loadSkeleton = true;
         //https://www.tangledrealitystudios.com/development-tips/prevent-unity-webgl-from-stopping-all-keyboard-input/
@@ -320,7 +313,14 @@ public class RESTGUIManager : MonoBehaviour {
         //float startX = 0;
         // float startY = 0.8f* Screen.height;
         //var backgroundRect = new Rect(startX, startY, annotationDisplayWidth, annotationDisplayHeight);
-
+       
+        var panelTransform = annotationPanel.GetComponent<RectTransform>();
+        annotationRect = RectTransformToScreenSpace(panelTransform);
+        annotationRect.x = annotationRect.x + annotationBorderWidth / 2;
+        annotationRect.y = annotationRect.y + annotationBorderWidth / 2;
+        annotationRect.width = (annotationRect.width - annotationBorderWidth / 2) * 0.93f;
+        annotationRect.height = annotationRect.height - annotationBorderWidth / 2 - 10;
+       
         Color labelBackColor = new Color(0.3f, 0.3f, 0.3f);
         Color frameMarkerColor = new Color(0, 0, 1);
         Color emptyColor = new Color(1, 0, 0);
