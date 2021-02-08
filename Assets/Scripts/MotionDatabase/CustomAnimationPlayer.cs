@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine.AI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
+using ICSharpCode.SharpZipLib.BZip2;
 
 namespace MotionDatabase { 
     public class CustomAnimationPlayer : MonoBehaviour
@@ -108,8 +109,10 @@ namespace MotionDatabase {
         {
             annotation = null;
             legacyAnnotation = null;
-            Stream stream = new MemoryStream(motionBytes);
-            BsonReader reader = new BsonReader(stream);
+            Stream ms = new MemoryStream(motionBytes);
+            ms.Seek(0, SeekOrigin.Begin); 
+            var bz2InputStream = new BZip2InputStream(ms);
+            BsonReader reader = new BsonReader(bz2InputStream);
             JsonSerializer serializer = new JsonSerializer();
             motion = serializer.Deserialize<CAnimationClip>(reader);
             motion.scaleTranslations(scaleFactor);
